@@ -4,7 +4,7 @@ import os
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from apps.main.models import Category
+from apps.main.models import Market
 
 
 class Command(BaseCommand):
@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--category_file", type=str, default="db_files/category.json",
+            "--category_file", type=str, default="db_files/market.json",
             help="Path to category.json"
         )
         parser.add_argument(
@@ -41,7 +41,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE(f"{len(categories)} categories found."))
 
         for cat in categories:
-            image_id = cat.get("image_id")
+            image_id = cat.get("logo_id")
             file_obj = file_data.get(image_id)
             if not file_obj:
                 self.stderr.write(
@@ -51,12 +51,17 @@ class Command(BaseCommand):
 
             image_path = os.path.join(file_obj["file"])
 
-            category, created = Category.objects.update_or_create(
+            category, created = Market.objects.update_or_create(
                 id=cat["id"],
                 name=cat["name"],
+                lon=cat["lon"],
+                lat=cat["lat"],
+                open_time=cat["start_time"],
+                end_time=cat["end_time"],
+                owner_id=1,
+                description=cat["description"],
                 defaults={
-                    "image": image_path,
-                    "parent": None,  # hozircha parent yo‘q, agar keyin qo‘shilsa mapping qilish mumkin
+                    "logo": image_path,
                 },
             )
 
