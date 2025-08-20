@@ -1,7 +1,8 @@
 from django.shortcuts import render
 
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.filters import SearchFilter
+from rest_framework import permissions
 
 from apps.main.models import Product
 from apps.product.serializers import ProductSerializer
@@ -25,3 +26,9 @@ class ProductView(ListAPIView):
             qs = qs.filter(category_id=category_id)
         
         return qs
+
+class ProductDetailView(RetrieveAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+    lookup_field = 'pk'
