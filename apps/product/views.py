@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 from rest_framework.generics import ListAPIView
+from rest_framework.filters import SearchFilter
 
 from apps.main.models import Product
 from apps.product.serializers import ProductSerializer
@@ -9,6 +10,8 @@ from apps.product.serializers import ProductSerializer
 class ProductView(ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name', 'name_ru', 'name_uz', 'name_en']
 
     def get_queryset(self):
         qs = super().get_queryset()
