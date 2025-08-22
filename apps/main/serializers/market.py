@@ -4,6 +4,7 @@ from apps.main.models import Market
 
 
 class MarketSerializer(serializers.ModelSerializer):
+    is_favorited = serializers.BooleanField(read_only=True)
     class Meta:
         model = Market
         fields = (
@@ -17,4 +18,5 @@ class MarketSerializer(serializers.ModelSerializer):
             "open_time",
             "end_time",
             "owner",
+            "is_favorited",
         )
