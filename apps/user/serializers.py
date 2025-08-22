@@ -1,5 +1,6 @@
 import uuid
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 
 from django.contrib.auth import get_user_model
 from apps.user.models import PendingVerification
@@ -41,7 +42,6 @@ class LoginSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=128, read_only=True)
 
     def validate(self, attrs):
-        from rest_framework.authtoken.models import Token
         attrs = super().validate(attrs)
 
         user_exists = User.objects.filter(phone_number=attrs['phone']).first()
@@ -54,11 +54,13 @@ class LoginSerializer(serializers.Serializer):
         attrs['first_name'] = user_exists.first_name
         attrs['last_name'] = user_exists.last_name
         attrs['id'] = user_exists.pk
-        
+
         return attrs
         
 class RegisterSerializer(serializers.ModelSerializer):
-    code = serializers.CharField(max_length=4, read_only=True)
+    code = serializers.CharField(max_length=4)
+    token = serializers.CharField(max_length=128, read_only=True)
+
     class Meta:
         model = User
         fields = (
@@ -67,6 +69,17 @@ class RegisterSerializer(serializers.ModelSerializer):
             "last_name",
             "phone_number",
             "code",
+            "token",
         )
 
-    
+    def create(self, validated_data):
+        user = User.objects.create(
+            first_name=validated_data.get('first_name'),
+            last_name=validated_data.get('last_name'),
+            phone_number=validated_data.get('phone_number')
+        )
+
+        token, created = Token.objects.get_or_create(user=user)
+        validated_data['token'] = token.key
+        
+        return validated_data
