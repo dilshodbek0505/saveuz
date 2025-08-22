@@ -24,6 +24,7 @@ class MarketView(ListAPIView):
                 Favorite.objects.filter(
                     market=OuterRef('pk'),
                     user=user,
+                    is_active=True,
                 )
             )
         )
@@ -46,6 +47,7 @@ class MarketDetailView(RetrieveAPIView):
                 Favorite.objects.filter(
                     market=OuterRef('pk'),
                     user=user,
+                    is_active=True
                 )
             )
         )

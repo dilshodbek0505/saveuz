@@ -32,6 +32,7 @@ class ProductView(ListAPIView):
                 Favorite.objects.filter(
                     product=OuterRef('pk'),
                     user=user,
+                    is_active=True
                 )
             )
         )
@@ -53,6 +54,7 @@ class ProductDetailView(RetrieveAPIView):
                 Favorite.objects.filter(
                     product=OuterRef('pk'),
                     user=user,
+                    is_active=True,
                 )
             )
         )
