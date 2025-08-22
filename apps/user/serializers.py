@@ -58,7 +58,7 @@ class LoginSerializer(serializers.Serializer):
         return attrs
         
 class RegisterSerializer(serializers.ModelSerializer):
-    code = serializers.CharField(max_length=4)
+    code = serializers.CharField(max_length=5)
     token = serializers.CharField(max_length=128, read_only=True)
 
     class Meta:
