@@ -5,6 +5,7 @@ from apps.main.serializers import CategorySerializer, MarketSerializer
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    is_favorited = serializers.BooleanField(read_only=True)
     class Meta:
         model = Product
         fields = (
@@ -18,6 +19,8 @@ class ProductSerializer(serializers.ModelSerializer):
             "discount_type",
             "discount_value",
             "category",
+            "is_favorited",
+            "is_favorited",
         )
 
     def to_representation(self, instance):
