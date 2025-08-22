@@ -16,6 +16,7 @@ class Favorite(BaseModel):
                                on_delete=models.CASCADE,
                                blank=True, null=True,
                                related_name="favorites")
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "Favorite"
