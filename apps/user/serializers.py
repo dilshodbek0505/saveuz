@@ -33,8 +33,11 @@ class OTPSendSerializer(serializers.Serializer):
         return validated_data
 
 class LoginSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    first_name = serializers.CharField(max_length=128, read_only=True)
+    last_name = serializers.CharField(max_length=128, read_only=True)
     phone = serializers.CharField(max_length=32)
-    code = serializers.CharField(max_length=4)
+    code = serializers.CharField(max_length=5)
     token = serializers.CharField(max_length=128, read_only=True)
 
     def validate(self, attrs):
@@ -48,6 +51,10 @@ class LoginSerializer(serializers.Serializer):
         token, is_created = Token.objects.get_or_create(user=user_exists)
         attrs["token"] = token.key
 
+        attrs['first_name'] = user_exists.first_name
+        attrs['last_name'] = user_exists.last_name
+        attrs['id'] = user_exists.pk
+        
         return attrs
         
 class RegisterSerializer(serializers.ModelSerializer):

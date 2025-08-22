@@ -32,8 +32,8 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="support@example.com"),
         license=openapi.License(name="BSD License"),
     ),
-    public=True,
-    permission_classes=[permissions.AllowAny],
+    public=False,
+    permission_classes=[permissions.IsAuthenticated],
 )
 
 urlpatterns = [
@@ -41,9 +41,9 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
 
     # swagger
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    # re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    # path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
     path("api/v1/product/", include("apps.product.urls")),
     path("api/v1/user/", include("apps.user.urls")),
