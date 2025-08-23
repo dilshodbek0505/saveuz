@@ -27,6 +27,12 @@ class ProductView(ListAPIView):
         if category_id:
             qs = qs.filter(category_id=category_id)
         
+        is_discount = self.request.query_params.get("is_discount")
+        if is_discount and (is_discount == "True" or is_discount == "true"):
+            qs = qs.filter(discount_type__isnull=False,
+                           discount_price__isnull=False,
+                           discount_value__isnull=False)
+
         qs = qs.annotate(
             is_favorited=Exists(
                 Favorite.objects.filter(
@@ -36,7 +42,7 @@ class ProductView(ListAPIView):
                 )
             )
         )
-        return qs
+        return qs.order_by('id')
 
 class ProductDetailView(RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
