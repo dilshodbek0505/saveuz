@@ -38,8 +38,11 @@ class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        request.user.auth_token.delete()
-        return Response({"msg": "Logged out"}, status=200)
+        try:
+            request.user.auth_token.delete()
+            return Response({"msg": "Logged out"}, status=200)
+        except Exception as err:
+            return Response({"msg": "error"}, status=400)
 
 class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
