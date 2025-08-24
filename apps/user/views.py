@@ -42,7 +42,7 @@ class LogoutView(APIView):
             request.user.auth_token.delete()
             return Response({"msg": "Logged out"}, status=200)
         except Exception as err:
-            return Response({"msg": "error"}, status=400)
+            return Response({"msg": "error"}, status=200)
 
 class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
