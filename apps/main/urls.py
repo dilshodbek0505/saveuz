@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from apps.main.views import BannerView, CategoryView, MarketView \
-                            ,FavoriteViewSet, MarketDetailView
+                            ,FavoriteViewSet, MarketDetailView, NotificationListView
 
 
 router = DefaultRouter()
@@ -14,6 +14,7 @@ urlpatterns = [
     path("category/CategoryList/", CategoryView.as_view(), name="category-list"),
     path("market/MarketList/", MarketView.as_view(), name="market-list"),
     path("market/MarketDetail/<int:pk>/", MarketDetailView.as_view(), name="market-detail"),
+    path("notifications/NotificationList/", NotificationListView.as_view(), name="notification-list"),
 
     *router.urls,
 

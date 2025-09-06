@@ -70,13 +70,15 @@ class RegisterSerializer(serializers.ModelSerializer):
             "phone_number",
             "code",
             "token",
+            "fcm_token"
         )
 
     def create(self, validated_data):
         user = User.objects.create(
             first_name=validated_data.get('first_name'),
             last_name=validated_data.get('last_name'),
-            phone_number=validated_data.get('phone_number')
+            phone_number=validated_data.get('phone_number'),
+            fcm_token=validated_data.get("fcm_token")
         )
 
         token, created = Token.objects.get_or_create(user=user)

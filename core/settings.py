@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "import_export",
     "drf_yasg",
+    "fcm_django",
 
     "apps.user",
     "apps.main",
@@ -173,3 +174,47 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # jazzmin
 from core.jazzmin_conf import *
+
+
+REDIS_URL = env.str("REDIS_URL", "redis://127.0.0.1:6379/0")
+
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+
+
+CELERY_TIMEZONE = "Asia/Tashkent"
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_TASK_SOFT_TIME_LIMIT = 10 * 60
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_ENABLE_UTC = True
+
+
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_TASK_ACKS_LATE = True
+
+HOST = "saveuz.uz"
+
+# CACHES
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"{env.str('REDIS_URL', 'redis://localhost:6379/0')}",
+        "KEY_PREFIX": "saveuz",
+    }
+}
+
+# CELERY CONFIGURATION
+CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", "redis://localhost:6379")
+CELERY_RESULT_BACKEND = env.str("CELERY_BROKER_URL", "redis://localhost:6379")
+
+CELERY_TIMEZONE = "Asia/Tashkent"
+
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+REDIS_HOST = env.str("REDIS_HOST", "localhost")
+REDIS_PORT = env.int("REDIS_PORT", 6379)
+REDIS_DB = env.int("REDIS_DB", 0)
+

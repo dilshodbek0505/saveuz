@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 from apps.user.managers import CustomUserManager
 
@@ -14,6 +15,17 @@ class User(AbstractUser):
         upload_to="user_logo/",
         blank=True, null=True, 
         verbose_name=_("Logo"))
+    notification_allowed = models.BooleanField(default=True)
+    test_user = models.BooleanField(default=False, help_text="Test uchun foydalanuvchi")
+    fcm_token = models.CharField(max_length=255, blank=True, null=True)
+    
+    lang = models.CharField(
+        _("Language"),
+        max_length=20,
+        choices=settings.LANGUAGES,
+        default="uz",  # set your system's default here
+        help_text=_("Preferred language for the user"),
+    )
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['first_name', 'last_name']
