@@ -1,7 +1,6 @@
 import requests
 
 from django.conf import settings
-from apps.user.utils import send_telegram_message
 
 ESKIZ_EMAIL = settings.ESKIZ_SMS_EMAIL
 ESKIZ_PASSWORD = settings.ESKIZ_SMS_PASSWORD
