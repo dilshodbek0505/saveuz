@@ -62,4 +62,4 @@ def send_telegram_message(text: str):
         "text": text
     }
 
-    res = requests.get(base_url, params=params, timeout=5)
+    res = requests.post(url=base_url, data=params)
