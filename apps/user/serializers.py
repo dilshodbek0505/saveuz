@@ -105,6 +105,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
+        phone = validated_data.get('phone')
+        code = validated_data.get('code')
+
+        cache_key = f"sms:{phone}"
+        saved_code = cache.get(cache_key)
+
+        if not saved_code or saved_code != code:
+            raise serializers.ValidationError({"msg": "Kod noto‘g‘ri yoki muddati tugagan"})
+
+        cache.delete(cache_key)
+        
         user = User.objects.create(
             first_name=validated_data.get('first_name'),
             last_name=validated_data.get('last_name'),
