@@ -47,7 +47,7 @@ class OTPSendSerializer(serializers.Serializer):
         cache_key = f"sms:{phone}"
         cache.set(cache_key, code, timeout=60*2)
 
-        sms_business = SMSBusiness(phone=phone, text=text)
+        sms_business = SMSBusiness(phone=f"998{phone}", text=text)
         if sms_business.send_sms() != 200:
             raise serializers.ValidationError({"msg": "sms yuborishda xatolik sodir bo'ldi"})
 
