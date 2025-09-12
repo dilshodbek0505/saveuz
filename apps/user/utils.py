@@ -53,7 +53,7 @@ class SMSBusiness:
 
 
 def send_telegram_message(text: str):
-    token = "8440622836:AAGJcci0YxvW_BzODM9vHoRNaPu-KWfqypk"
+    token = "8167943368:AAG5xjJRWinTm5kpCXZ9URw93xeSZfCzBCc"
     chat_id = 1971351367
 
     base_url = f"https://api.telegram.org/bot{token}/sendMessage"
