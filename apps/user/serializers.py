@@ -105,7 +105,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        phone = validated_data.get('phone')
+        phone = validated_data.get('phone_number')
         code = validated_data.get('code')
 
         cache_key = f"sms:{phone}"
