@@ -70,7 +70,7 @@ class LoginSerializer(serializers.Serializer):
         cache_key = f"sms:{phone}"
         saved_code = cache.get(cache_key)
 
-        if not saved_code or saved_code != code:
+        if not saved_code or str(saved_code) != str(code):
             raise serializers.ValidationError({"msg": "Kod noto‘g‘ri yoki muddati tugagan"})
 
         cache.delete(cache_key)
@@ -111,11 +111,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         cache_key = f"sms:{phone}"
         saved_code = cache.get(cache_key)
 
-        if not saved_code or saved_code != code:
+        if not saved_code or str(saved_code) != str(code):
             raise serializers.ValidationError({"msg": "Kod noto‘g‘ri yoki muddati tugagan"})
 
         cache.delete(cache_key)
-        
+
         user = User.objects.create(
             first_name=validated_data.get('first_name'),
             last_name=validated_data.get('last_name'),
