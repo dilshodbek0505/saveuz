@@ -46,10 +46,18 @@ class OTPSendSerializer(serializers.Serializer):
         
         cache_key = f"sms:{phone}"
         cache.set(cache_key, code, timeout=60*2)
-
+        
+        lang = self.get_lang()
+        
         sms_business = SMSBusiness(phone=f"998{phone}", text=text)
         if sms_business.send_sms() != 200:
-            raise serializers.ValidationError({"msg": "sms yuborishda xatolik sodir bo'ldi"})
+            err_msg = "SMS yuborishda xatolik sodir bo'ldi"
+            if lang == "ru":
+                err_msg = "Произошла ошибка при отправке СМС."
+            if lang == "en":
+                err_msg = "An error occurred while sending SMS."
+            
+            raise serializers.ValidationError({"msg": err_msg})
 
         return validated_data
 
@@ -70,8 +78,18 @@ class LoginSerializer(serializers.Serializer):
         cache_key = f"sms:{phone}"
         saved_code = cache.get(cache_key)
 
+        res = self.context.get("request")
+        if res:
+            lang = res.headers.get("Accept-Language", "uz")
+
         if not saved_code or str(saved_code) != str(code):
-            raise serializers.ValidationError({"msg": "Kod noto‘g‘ri yoki muddati tugagan"})
+            err_msg = "Kod noto‘g‘ri yoki muddati tugagan"
+            if lang == "ru":
+                err_msg = "Код недействителен или просрочен."
+            if lang == "en":
+                err_msg = "The code is invalid or expired."
+            
+            raise serializers.ValidationError({"msg": err_msg})
 
         cache.delete(cache_key)
 
@@ -111,11 +129,31 @@ class RegisterSerializer(serializers.ModelSerializer):
         cache_key = f"sms:{phone}"
         saved_code = cache.get(cache_key)
 
+        res = self.context.get("request")
+        if res:
+            lang = res.headers.get("Accept-Language", "uz")
+
         if not saved_code or str(saved_code) != str(code):
-            raise serializers.ValidationError({"msg": "Kod noto‘g‘ri yoki muddati tugagan"})
+            err_msg = "Kod noto‘g‘ri yoki muddati tugagan."
+            if lang == "ru":
+                err_msg = "Код недействителен или просрочен."
+            if lang == "en":
+                err_msg = "The code is invalid or expired."
+
+            raise serializers.ValidationError({"msg": err_msg})
 
         cache.delete(cache_key)
 
+        user = User.objects.filter(phone_number=phone).exists()
+        if user:
+            err_msg = "Bunday foydalanuvchi allaqachon mavjud."
+            if lang == "ru":
+                err_msg = "Такой пользователь уже существует."
+            if lang == "en":
+                err_msg = "User already exists."
+            
+            raise serializers.ValidationError({"msg": err_msg})
+    
         user = User.objects.create(
             first_name=validated_data.get('first_name'),
             last_name=validated_data.get('last_name'),
