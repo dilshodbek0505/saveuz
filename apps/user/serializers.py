@@ -95,7 +95,13 @@ class LoginSerializer(serializers.Serializer):
 
         user_exists = User.objects.filter(phone_number=attrs['phone']).first()
         if not user_exists:
-            raise serializers.ValidationError({"phone": "User not found"})
+            err_msg = "Foydalanuvchi topilmadi"
+            if lang == "en":
+                err_msg = "User not found"
+            if lang == "ru":
+                err_msg = "Пользователь не найден"
+            
+            raise serializers.ValidationError({"phone": err_msg})
 
         token, is_created = Token.objects.get_or_create(user=user_exists)
         attrs["token"] = token.key
