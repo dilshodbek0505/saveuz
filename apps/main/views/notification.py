@@ -15,7 +15,6 @@ class NotificationListView(generics.ListAPIView):
 
 class ToggleNotificationAllowedView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    schema = None
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(pk=request.user.id)
