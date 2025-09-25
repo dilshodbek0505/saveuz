@@ -17,7 +17,7 @@ urlpatterns = [
     path("market/MarketDetail/<int:pk>/", MarketDetailView.as_view(), name="market-detail"),
 
     path("notifications/NotificationList/", NotificationListView.as_view(), name="notification-list"),
-    path("notifications/ToggleNotificationAllowed/", ToggleNotificationAllowedView.as_view(), name="notifications-toggle-allowed")
+    path("notifications/ToggleNotificationAllowed/", ToggleNotificationAllowedView.as_view(), name="notifications-toggle-allowed"),
 
     *router.urls,
 
