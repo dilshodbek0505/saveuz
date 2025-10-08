@@ -3,17 +3,19 @@ from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 
 from apps.main.models import Product
+from apps.product.formats import ImageAwareXLSX
 from apps.product.resources import ProductResource
 
 
 @admin.register(Product)
 class ProductAdmin(ImportExportModelAdmin):
     resource_class = ProductResource
+    formats = [ImageAwareXLSX]
     list_display = ("id", "name", "market")
     list_display_links = ("id", "name")
     search_fields = ("name", "market__name")
-    readonly_fields = ("discount_value", "discount_price", 
-                       "discount_type")
+    readonly_fields = ("discount_value", "discount_price", "discount_type")
+
     def get_queryset(self, request):
         user = request.user
         qs = super().get_queryset(request)
