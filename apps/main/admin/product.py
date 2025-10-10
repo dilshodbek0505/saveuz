@@ -6,7 +6,8 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from import_export.admin import ImportExportModelAdmin
+# ImportExportModelAdmin o'rniga faqat ExportMixin import qilindi
+from import_export.admin import ExportMixin 
 
 from apps.main.models import Product
 from apps.product.formats import ImageAwareXLSX
@@ -19,10 +20,11 @@ class BulkProductForm(forms.ModelForm):
         fields = "__all__"
 
 
+# ExportMixin va admin.ModelAdmin'dan meros olindi
 @admin.register(Product)
-class ProductAdmin(ImportExportModelAdmin):
+class ProductAdmin(ExportMixin, admin.ModelAdmin): 
     resource_class = ProductResource
-    formats = [ImageAwareXLSX]
+    formats = [ImageAwareXLSX] # Export uchun formatlar saqlab qolindi
     list_display = ("id", "name", "market")
     list_display_links = ("id", "name")
     search_fields = ("name", "market__name")
