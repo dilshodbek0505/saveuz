@@ -7,21 +7,21 @@ JAZZMIN_SETTINGS = {
     "site_logo_classes": "img-circle",
     "welcome_sign": "Welcome to SaveUz Admin",
     "copyright": "SaveUz Ltd",
-    "search_model": ["auth.User", "main.Product"],
+    "search_model": ["main.Product"],
 
     ############
     # Top Menu #
     ############
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Support", "url": "https://t.me/saveuz_support", "new_window": True},
+    {"name": "Support", "url": "https://t.me/save_uz_support", "new_window": True},
     ],
 
     #############
     # User Menu #
     #############
     "usermenu_links": [
-        {"name": "Support", "url": "https://t.me/saveuz_support", "new_window": True},
+        {"name": "Support", "url": "https://t.me/save_uz_support", "new_window": True},
         {"model": "auth.user"},
     ],
 

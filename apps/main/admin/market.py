@@ -1,13 +1,25 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from apps.main.models import Market
+from apps.main.models import Market, Product
+
+
+
+
+class ProductInline(admin.TabularInline):
+    model = Product
+    fields = ("name", "price", "image", "category")
+    extra = 3
+    min_num = 0
+    verbose_name = "Product"
+    verbose_name_plural = "Products"
 
 
 @admin.register(Market)
 class MarketAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "owner", "get_product_count")
     list_display_links = ("id", "name")
+    inlines = [ProductInline]
 
     def get_queryset(self, request):
         user = request.user
