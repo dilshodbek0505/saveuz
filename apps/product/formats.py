@@ -1,5 +1,6 @@
+import base64
+import logging
 import os
-import uuid
 from io import BytesIO
 from pathlib import Path
 
@@ -14,6 +15,7 @@ from tablib import Dataset
 
 
 class ImageAwareXLSX(XLSX):
+    logger = logging.getLogger(__name__)
     title = "xlsx (images)"
 
     image_column_name = "image"
@@ -69,12 +71,14 @@ class ImageAwareXLSX(XLSX):
         return output.getvalue()
 
     def create_dataset(self, in_stream, **kwargs):
+        self.logger.debug("ImageAwareXLSX.create_dataset: starting, stream type=%s", type(in_stream).__name__)
         if hasattr(in_stream, "read"):
             raw = in_stream.read()
         else:
             raw = in_stream
 
         if raw is None:
+            self.logger.error("ImageAwareXLSX.create_dataset: received no data for import")
             raise TypeError("No data provided for import")
 
         if isinstance(raw, str):
@@ -83,21 +87,37 @@ class ImageAwareXLSX(XLSX):
             raw = raw.tobytes()
         elif isinstance(raw, bytearray):
             raw = bytes(raw)
+
+        if not isinstance(raw, (bytes, bytearray)):
+            self.logger.error(
+                "ImageAwareXLSX.create_dataset: unexpected data type %s",
+                type(raw).__name__,
+            )
+            raise TypeError("Unsupported data buffer type")
+
+        self.logger.debug("ImageAwareXLSX.create_dataset: buffer length=%s bytes", len(raw))
         dataset = super().create_dataset(BytesIO(raw), **kwargs)
+        self.logger.debug(
+            "ImageAwareXLSX.create_dataset: dataset created headers=%s count=%s",
+            getattr(dataset, "headers", None),
+            len(dataset) if hasattr(dataset, "__len__") else "n/a",
+        )
 
         if not isinstance(dataset, Dataset) or not dataset.headers:
+            self.logger.debug("ImageAwareXLSX.create_dataset: dataset has no headers, skipping image extraction")
             return dataset
 
         if self.image_column_name not in dataset.headers:
+            self.logger.debug(
+                "ImageAwareXLSX.create_dataset: '%s' column not present in headers=%s",
+                self.image_column_name,
+                dataset.headers,
+            )
             return dataset
 
         image_col_idx = dataset.headers.index(self.image_column_name) + 1
         workbook = load_workbook(filename=BytesIO(raw))
         sheet = workbook.active
-
-        media_root = Path(settings.MEDIA_ROOT)
-        cache_dir = media_root / "import_cache"
-        cache_dir.mkdir(parents=True, exist_ok=True)
 
         for picture in getattr(sheet, "_images", []):
             anchor = getattr(picture, "anchor", None)
@@ -127,14 +147,18 @@ class ImageAwareXLSX(XLSX):
                 continue
 
             image_bytes = picture._data()
-            converted_path = self._save_import_image(image_bytes, cache_dir)
-            if converted_path is None:
+            self.logger.debug(
+                "ImageAwareXLSX.create_dataset: found image at row=%s column=%s",
+                row_number,
+                column_number,
+            )
+            encoded_image = self._encode_import_image(image_bytes)
+            if encoded_image is None:
                 continue
 
-            relative_path = Path("import_cache") / converted_path.name
+            dataset[dataset_row_index, image_col_idx - 1] = encoded_image
 
-            dataset[dataset_row_index, image_col_idx - 1] = str(relative_path)
-
+        self.logger.debug("ImageAwareXLSX.create_dataset: completed image extraction")
         return dataset
 
     def _prepare_excel_image(self, file_path):
@@ -155,14 +179,25 @@ class ImageAwareXLSX(XLSX):
             image = XLImage(converted)
             image.format = "png"
             return image
-        except (UnidentifiedImageError, FileNotFoundError, OSError):
+        except (UnidentifiedImageError, FileNotFoundError, OSError) as exc:
+            self.logger.error(
+                "ImageAwareXLSX._prepare_excel_image failed for %s: %s",
+                file_path,
+                exc,
+            )
             return None
 
-    def _save_import_image(self, image_bytes, cache_dir: Path):
+    def _encode_import_image(self, image_bytes):
         stream = BytesIO(image_bytes)
         try:
             with PILImage.open(stream) as image:
                 original_format = (image.format or "PNG").lower()
+                self.logger.debug(
+                    "ImageAwareXLSX._encode_import_image: original_format=%s size=%s mode=%s",
+                    original_format,
+                    image.size,
+                    image.mode,
+                )
                 if original_format not in self.import_allowed_formats:
                     image = image.convert("RGBA")
                 elif original_format in {"jpeg", "jpg"} and image.mode not in ("RGB", "L"):
@@ -173,11 +208,22 @@ class ImageAwareXLSX(XLSX):
                 if image.size != self.export_image_max_size:
                     image = image.resize(self.export_image_max_size, PILImage.LANCZOS)
 
-                extension = "jpg" if original_format in {"jpeg", "jpg"} else "png"
+                if original_format in {"jpeg", "jpg"}:
+                    save_format = "JPEG"
+                    mime_type = "image/jpeg"
+                else:
+                    save_format = "PNG"
+                    mime_type = "image/png"
 
-                filename = f"{uuid.uuid4().hex}.{extension}"
-                output_path = cache_dir / filename
-                image.save(output_path, format=save_format)
-                return output_path
-        except (UnidentifiedImageError, OSError):
+                buffer = BytesIO()
+                image.save(buffer, format=save_format)
+                encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
+                self.logger.debug(
+                    "ImageAwareXLSX._encode_import_image: encoded length=%s mime=%s",
+                    len(encoded),
+                    mime_type,
+                )
+                return f"data:{mime_type};base64,{encoded}"
+        except (UnidentifiedImageError, OSError) as exc:
+            self.logger.error("ImageAwareXLSX._encode_import_image failed: %s", exc)
             return None

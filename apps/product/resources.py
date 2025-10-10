@@ -1,5 +1,6 @@
 import base64
 import binascii
+import logging
 import os
 import uuid
 from io import BytesIO
@@ -86,10 +87,20 @@ class ImageFieldWidget(Widget):
         filename = os.path.basename(file_path)
         with open(file_path, "rb") as image_file:
             file_content = image_file.read()
+        logger.debug(
+            "ImageFieldWidget: reading file=%s bytes=%s",
+            file_path,
+            len(file_content),
+        )
 
-        with Image.open(BytesIO(file_content)) as image:
-            image = self._resize_image(image)
-            return self._image_to_content_file(image, filename)
+        try:
+            with Image.open(BytesIO(file_content)) as image:
+                image = self._resize_image(image)
+                logger.debug("ImageFieldWidget: loaded image from path %s", file_path)
+                return self._image_to_content_file(image, filename)
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("ImageFieldWidget: failed to process image from path %s", file_path)
+            raise ValueError(str(exc)) from exc
 
     def _load_from_base64(self, data):
         header, encoded = data.split(";base64,", 1)
@@ -101,6 +112,7 @@ class ImageFieldWidget(Widget):
         try:
             raw = base64.b64decode(encoded)
         except binascii.Error as exc:
+            logger.exception("ImageFieldWidget: invalid base64 payload encountered")
             raise ValueError(_("Image data is not valid base64.")) from exc
 
         if len(raw) > self.max_size_bytes:
@@ -112,15 +124,21 @@ class ImageFieldWidget(Widget):
         extension = "jpg" if mime_type in {"image/jpeg", "image/jpg"} else "png"
         filename = f"{uuid.uuid4().hex}.{extension}"
 
-        with Image.open(BytesIO(raw)) as image:
-            image = self._resize_image(image)
-            return self._image_to_content_file(image, filename)
+        try:
+            with Image.open(BytesIO(raw)) as image:
+                image = self._resize_image(image)
+                logger.debug("ImageFieldWidget: decoded base64 image (mime=%s, size=%s)", mime_type, image.size)
+                return self._image_to_content_file(image, filename)
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("ImageFieldWidget: failed to decode base64 image payload")
+            raise ValueError(str(exc)) from exc
 
     def clean(self, value, row=None, *args, **kwargs):
         if not value:
             return None
 
         value = value.strip()
+        logger.debug("ImageFieldWidget.clean: received value prefix=%s...", value[:30] if len(value) > 30 else value)
         if ";base64," in value:
             return self._load_from_base64(value)
 
@@ -149,6 +167,7 @@ class ImageFieldWidget(Widget):
             image = image.convert("RGB")
         image.save(buffer, format=format_, optimize=True)
         buffer.seek(0)
+        logger.debug("ImageFieldWidget: serialized image filename=%s format=%s size=%s", filename, format_, image.size)
         return ContentFile(buffer.read(), name=filename)
 
 
@@ -207,3 +226,21 @@ class ProductResource(resources.ModelResource):
             "category",
             "market",
         )
+
+    def before_import_row(self, row, **kwargs):
+        logger.info("ProductResource: preparing row for product '%s'", row.get("name"))
+        return super().before_import_row(row, **kwargs)
+
+    def import_row(self, row, instance_loader, **kwargs):
+        try:
+            result = super().import_row(row, instance_loader, **kwargs)
+            logger.info(
+                "ProductResource: successfully processed row name=%s result=%s",
+                row.get("name"),
+                getattr(result, "import_type", None),
+            )
+            return result
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("ProductResource: failed to import row with data %s", row)
+            raise
+logger = logging.getLogger(__name__)
