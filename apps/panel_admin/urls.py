@@ -7,8 +7,11 @@ from apps.panel_admin.views.product import (
 )
 
 
+app_name = "panel_admin"
+
+
 urlpatterns = [
-    path("markets/", AdminMarketListView.as_view(), name="admin-markets-list"),
-    path("categories/", AdminCategoryListView.as_view(), name="admin-categories-list"),
-    path("products/bulk-create/", AdminBulkProductCreateView.as_view(), name="admin-products-bulk-create"),
+    path("markets/", AdminMarketListView.as_view(), name="markets-list"),
+    path("categories/", AdminCategoryListView.as_view(), name="categories-list"),
+    path("products/bulk-create/", AdminBulkProductCreateView.as_view(), name="products-bulk-create"),
 ]
