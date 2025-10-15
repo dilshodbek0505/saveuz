@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "apps.main",
     "apps.product",
     "apps.bot",
+    "apps.panel_admin",
 
 ]
 
