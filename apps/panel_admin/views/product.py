@@ -28,6 +28,8 @@ class AdminCategorySerializer(serializers.ModelSerializer):
 
 
 class BulkProductItemSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(required=False, allow_null=True)
+
     class Meta:
         model = Product
         fields = (

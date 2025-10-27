@@ -6,7 +6,12 @@ from apps.main.models import BaseModel, Market
 
 class Product(BaseModel):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
-    image = models.ImageField(upload_to="product_images/", verbose_name=_("Image"))
+    image = models.ImageField(
+        upload_to="product_images/",
+        blank=True,
+        null=True,
+        verbose_name=_("Image"),
+    )
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Price"))
     description = models.TextField(verbose_name=_("Description"))
     market = models.ForeignKey(Market,
