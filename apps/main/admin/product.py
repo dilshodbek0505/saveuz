@@ -29,7 +29,7 @@ class ProductAdmin(ExportMixin, admin.ModelAdmin):
     list_display_links = ("id", "name")
     search_fields = ("name", "market__name")
     readonly_fields = ("discount_value", "discount_price", "discount_type")
-    bulk_formset_extra = 10
+    bulk_formset_extra = 1
 
     def _restrict_market_queryset(self, formset, request):
         if request.user.is_staff and not request.user.is_superuser:
