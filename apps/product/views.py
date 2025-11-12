@@ -4,12 +4,12 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.filters import SearchFilter
 from rest_framework import permissions
 
-from apps.main.models import Product, Favorite
+from apps.main.models import Favorite, Product
 from apps.product.serializers import ProductSerializer
 
 
 class ProductView(ListAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related("market", "category").prefetch_related("images")
     serializer_class = ProductSerializer
     filter_backends = [SearchFilter]
     search_fields = ['name', 'name_ru', 'name_uz', 'name_en']
@@ -47,7 +47,7 @@ class ProductView(ListAPIView):
 class ProductDetailView(RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ProductSerializer
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related("market", "category").prefetch_related("images")
     lookup_field = 'pk'
 
 

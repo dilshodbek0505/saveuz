@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from apps.main.models import Market, Product
@@ -8,11 +9,19 @@ from apps.main.models import Market, Product
 
 class ProductInline(admin.TabularInline):
     model = Product
-    fields = ("name", "price", "image", "category")
+    fields = ("name", "price", "category", "primary_image_preview")
+    readonly_fields = ("primary_image_preview",)
     extra = 3
     min_num = 0
     verbose_name = "Product"
     verbose_name_plural = "Products"
+
+    def primary_image_preview(self, obj):
+        image_file = obj.primary_image_file
+        if not image_file:
+            return _("No image")
+        return format_html('<img src="{}" style="max-height:80px;max-width:80px;" />', image_file.url)
+    primary_image_preview.short_description = _("Primary image")
 
 
 @admin.register(Market)

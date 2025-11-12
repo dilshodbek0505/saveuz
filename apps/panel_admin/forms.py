@@ -1,16 +1,16 @@
 from django import forms
 from django.forms import modelformset_factory
 
+from apps.main.forms.product import ProductImagesFormMixin
 from apps.main.models import Product
 
 
-class ProductBulkForm(forms.ModelForm):
+class ProductBulkForm(ProductImagesFormMixin, forms.ModelForm):
     class Meta:
         model = Product
         fields = (
             "name",
             "price",
-            "image",
             "description",
             "market",
             "category",

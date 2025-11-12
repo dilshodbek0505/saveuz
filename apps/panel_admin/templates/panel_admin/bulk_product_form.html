@@ -186,21 +186,27 @@
     display: none;
   }
 
+  .thumb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 8px;
+    width: 180px;
+  }
+
   .thumb {
-    width: 140px;
-    height: 140px;
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
     border: 2px solid var(--gray-300);
     border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
     background: var(--gray-50);
-    position: relative;
-    cursor: pointer;
+    overflow: hidden;
   }
 
   .thumb img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -215,7 +221,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    position: absolute;
+    inset: 0;
   }
 
   .thumb-placeholder svg {
@@ -245,6 +254,11 @@
 
   .hidden {
     display: none;
+  }
+
+  .image-counter {
+    font-size: 12px;
+    color: var(--gray-500);
   }
 
   /* Error Messages */
@@ -434,21 +448,56 @@
                 {% endfor %}
               </td>
               <td>
-                <div class="image-field">
-                  {% with has_image=form.instance.image %}
-                    <div class="thumb" data-role="thumb-trigger">
-                      <img class="thumb-img {% if not has_image %}hidden{% endif %}" src="{% if has_image %}{{ form.instance.image.url }}{% endif %}" alt="Mahsulot rasmi">
-                      <div class="thumb-placeholder {% if has_image %}hidden{% endif %}">
+                <div class="image-field" data-role="image-field">
+                  <div class="thumb-grid" data-role="thumb-grid">
+                    {% if form.instance.pk %}
+                      {% with existing=form.instance.images.all %}
+                        {% if existing %}
+                          {% for product_image in existing %}
+                            <div class="thumb">
+                              <img src="{{ product_image.image.url }}" alt="Mahsulot rasmi">
+                            </div>
+                          {% endfor %}
+                        {% else %}
+                          <div class="thumb thumb-placeholder" data-role="thumb-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span>Rasmlar yuklash</span>
+                          </div>
+                        {% endif %}
+                      {% endwith %}
+                    {% else %}
+                      <div class="thumb thumb-placeholder" data-role="thumb-placeholder">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <span>Rasm yuklash</span>
+                        <span>Rasmlar yuklash</span>
                       </div>
-                    </div>
-                  {% endwith %}
-                  {{ form.image }}
+                    {% endif %}
+                  </div>
+                  <button type="button" class="upload-btn" data-role="upload-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Rasmlar yuklash
+                  </button>
+                  <div class="image-counter" data-role="image-counter">
+                    {% if form.instance.pk %}
+                      {% with count=form.instance.images.count %}
+                        {% if count %}
+                          {{ count }} ta rasm mavjud
+                        {% else %}
+                          Rasm tanlanmadi
+                        {% endif %}
+                      {% endwith %}
+                    {% else %}
+                      Rasm tanlanmadi
+                    {% endif %}
+                  </div>
+                  {{ form.images }}
                 </div>
-                {% for error in form.image.errors %}
+                {% for error in form.images.errors %}
                   <div class="form-error">{{ error }}</div>
                 {% endfor %}
               </td>
@@ -525,17 +574,23 @@
       {{ formset.empty_form.description }}
     </td>
     <td>
-      <div class="image-field">
-        <div class="thumb" data-role="thumb-trigger">
-          <img class="thumb-img hidden" alt="Mahsulot rasmi">
-          <div class="thumb-placeholder">
+      <div class="image-field" data-role="image-field">
+        <div class="thumb-grid" data-role="thumb-grid">
+          <div class="thumb thumb-placeholder" data-role="thumb-placeholder">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span>Rasm yuklash</span>
+            <span>Rasmlar yuklash</span>
           </div>
         </div>
-        {{ formset.empty_form.image }}
+        <button type="button" class="upload-btn" data-role="upload-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          Rasmlar yuklash
+        </button>
+        <div class="image-counter" data-role="image-counter">Rasm tanlanmadi</div>
+        {{ formset.empty_form.images }}
       </div>
     </td>
     <td>
@@ -569,54 +624,85 @@
     return;
   }
 
-  // Image preview with click trigger
-  function setupImagePreview(row) {
-    const fileInput = row.querySelector('input[type="file"]');
-    const thumbTrigger = row.querySelector('[data-role="thumb-trigger"]');
-    
-    if (!fileInput || !thumbTrigger) return;
-    
-    const previewImg = row.querySelector(".thumb-img");
-    const placeholder = row.querySelector(".thumb-placeholder");
+  const previewUrlCache = new WeakMap();
 
-    // Click on thumb to trigger file input
-    thumbTrigger.addEventListener("click", function() {
+  function clearPreviewUrls(row) {
+    const urls = previewUrlCache.get(row) || [];
+    urls.forEach((url) => URL.revokeObjectURL(url));
+    previewUrlCache.set(row, []);
+  }
+
+  function renderImagePreviews(row, files) {
+    const grid = row.querySelector('[data-role="thumb-grid"]');
+    const placeholder = row.querySelector('[data-role="thumb-placeholder"]');
+    const counter = row.querySelector('[data-role="image-counter"]');
+
+    if (!grid) {
+      return;
+    }
+
+    clearPreviewUrls(row);
+    grid.querySelectorAll('[data-preview="1"]').forEach((node) => node.remove());
+
+    if (!files.length) {
+      if (placeholder) {
+        placeholder.classList.remove("hidden");
+      }
+      if (counter) {
+        counter.textContent = "Rasm tanlanmadi";
+      }
+      return;
+    }
+
+    if (placeholder) {
+      placeholder.classList.add("hidden");
+    }
+    if (counter) {
+      counter.textContent = `${files.length} ta rasm tanlandi`;
+    }
+
+    const urls = [];
+    const fragment = document.createDocumentFragment();
+
+    files.forEach((file) => {
+      const thumb = document.createElement("div");
+      thumb.className = "thumb";
+      thumb.dataset.preview = "1";
+
+      const img = document.createElement("img");
+      const objectUrl = URL.createObjectURL(file);
+      img.src = objectUrl;
+      urls.push(objectUrl);
+
+      thumb.appendChild(img);
+      fragment.appendChild(thumb);
+    });
+
+    grid.appendChild(fragment);
+    previewUrlCache.set(row, urls);
+  }
+
+  function setupImagePreview(row) {
+    const fileInput = row.querySelector('[data-role="image-input"]');
+    const trigger = row.querySelector('[data-role="upload-trigger"]');
+
+    if (!fileInput || !trigger) {
+      return;
+    }
+
+    trigger.addEventListener("click", function () {
       fileInput.click();
     });
 
     fileInput.addEventListener("change", function () {
-      const files = fileInput.files;
-      if (files && files[0]) {
-        const objectUrl = URL.createObjectURL(files[0]);
-        if (previewImg) {
-          if (previewImg.dataset.objectUrl) {
-            URL.revokeObjectURL(previewImg.dataset.objectUrl);
-          }
-          previewImg.src = objectUrl;
-          previewImg.dataset.objectUrl = objectUrl;
-          previewImg.classList.remove("hidden");
-        }
-        if (placeholder) {
-          placeholder.classList.add("hidden");
-        }
-      } else {
-        if (previewImg) {
-          if (previewImg.dataset.objectUrl) {
-            URL.revokeObjectURL(previewImg.dataset.objectUrl);
-            delete previewImg.dataset.objectUrl;
-          }
-          previewImg.src = "";
-          previewImg.classList.add("hidden");
-        }
-        if (placeholder) {
-          placeholder.classList.remove("hidden");
-        }
-      }
+      const files = Array.from(fileInput.files || []);
+      renderImagePreviews(row, files);
     });
   }
 
   // Setup row
   function setupRow(row) {
+    previewUrlCache.set(row, []);
     setupImagePreview(row);
   }
 

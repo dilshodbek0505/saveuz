@@ -13,6 +13,8 @@ from drf_yasg import openapi
 from apps.main.models import Market, Product, Category
 from apps.product.serializers import ProductSerializer
 from apps.panel_admin.models import AdminDevice
+from apps.main.services.product_images import attach_product_images
+from apps.product.fields import MultipleImageUploadField
 
 
 class AdminMarketSerializer(serializers.ModelSerializer):
@@ -28,14 +30,14 @@ class AdminCategorySerializer(serializers.ModelSerializer):
 
 
 class BulkProductItemSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(required=False, allow_null=True)
+    images = MultipleImageUploadField()
 
     class Meta:
         model = Product
         fields = (
             "name",
             "price",
-            "image",
+            "images",
             "description",
             "market",
             "discount_price",
@@ -79,7 +81,7 @@ class AdminBulkProductCreateView(APIView):
     Payload format:
     {
       "items": [
-        {"name": str, "price": number, "image": file/url, "description": str,
+        {"name": str, "price": number, "images": [file/url], "description": str,
          "market": id, "category": id, "discount_price": number|null,
          "discount_type": str|null, "discount_value": number|null}
       ]
@@ -116,7 +118,9 @@ class AdminBulkProductCreateView(APIView):
         with transaction.atomic():
             products = []
             for validated in items:
+                image_files = validated.pop("images", [])
                 product = Product.objects.create(**validated)
+                attach_product_images(product, image_files)
                 products.append(product)
 
         # Re-serialize created instances to return IDs and nested fields

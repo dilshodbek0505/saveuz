@@ -4,7 +4,7 @@ import os
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from apps.main.models import Product
+from apps.main.models import Product, ProductImage
 
 
 class Command(BaseCommand):
@@ -95,17 +95,21 @@ class Command(BaseCommand):
                 continue
                 
             try:
-                product = Product.objects.create(
+                product_instance = Product.objects.create(
                     id=product['id'],
                     name=product['name'],
                     description="description",
-                    image=image_path,
                     price=market_product["base_price"],
                     market_id=market_product["market_id"],
                     category_id=product["category_id"],
 
                 )
-                self.stdout.write(self.style.SUCCESS(f"Created category: {product.name}"))
+                ProductImage.objects.create(
+                    product=product_instance,
+                    image=image_path,
+                    position=0,
+                )
+                self.stdout.write(self.style.SUCCESS(f"Created category: {product_instance.name}"))
             except Exception as err:
                 pass
             

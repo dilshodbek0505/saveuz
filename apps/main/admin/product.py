@@ -9,15 +9,22 @@ from django.utils.translation import gettext_lazy as _
 # ImportExportModelAdmin o'rniga faqat ExportMixin import qilindi
 from import_export.admin import ExportMixin 
 
-from apps.main.models import Product
+from apps.main.forms.product import ProductImagesFormMixin
+from apps.main.models import Product, ProductImage
 from apps.product.formats import ImageAwareXLSX
 from apps.product.resources import ProductResource
 
 
-class BulkProductForm(forms.ModelForm):
+class BulkProductForm(ProductImagesFormMixin, forms.ModelForm):
     class Meta:
         model = Product
         fields = "__all__"
+
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
+    fields = ("image", "position")
 
 
 # ExportMixin va admin.ModelAdmin'dan meros olindi
@@ -30,6 +37,7 @@ class ProductAdmin(ExportMixin, admin.ModelAdmin):
     search_fields = ("name", "market__name")
     readonly_fields = ("discount_value", "discount_price", "discount_type")
     bulk_formset_extra = 1
+    inlines = (ProductImageInline,)
 
     def _restrict_market_queryset(self, formset, request):
         if request.user.is_staff and not request.user.is_superuser:

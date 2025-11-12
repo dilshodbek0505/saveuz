@@ -15,6 +15,7 @@ from import_export.widgets import Widget
 from PIL import Image
 
 from apps.main.models import Category, Market, Product
+from apps.main.services.product_images import attach_product_images
 
 ALLOWED_IMPORT_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 ALLOWED_IMPORT_MIME_TYPES = {"image/jpeg", "image/png", "image/jpg"}
@@ -179,7 +180,7 @@ class ProductResource(resources.ModelResource):
     price = fields.Field(column_name="price", attribute="price")
     image = fields.Field(
         column_name="image",
-        attribute="image",
+        attribute="_import_image",
         widget=ImageFieldWidget(max_size_mb=IMAGE_MAX_SIZE_MB),
     )
     discount_price = fields.Field(
@@ -227,6 +228,10 @@ class ProductResource(resources.ModelResource):
             "market",
         )
 
+    def dehydrate_image(self, product):
+        file_field = product.primary_image_file
+        return file_field.name if file_field else ""
+
     def before_import_row(self, row, **kwargs):
         logger.info("ProductResource: preparing row for product '%s'", row.get("name"))
         return super().before_import_row(row, **kwargs)
@@ -243,4 +248,11 @@ class ProductResource(resources.ModelResource):
         except Exception as exc:  # noqa: BLE001
             logger.exception("ProductResource: failed to import row with data %s", row)
             raise
+
+    def after_save_instance(self, instance, using_transactions, dry_run=False):
+        image_file = getattr(instance, "_import_image", None)
+        if not dry_run and image_file:
+            attach_product_images(instance, [image_file], replace=True)
+            delattr(instance, "_import_image")
+        return super().after_save_instance(instance, using_transactions, dry_run=dry_run)
 logger = logging.getLogger(__name__)
