@@ -4,6 +4,9 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.filters import SearchFilter
 from rest_framework import permissions
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 from apps.main.models import Favorite, Product
 from apps.product.serializers import ProductSerializer
 
@@ -14,6 +17,16 @@ class ProductView(ListAPIView):
     filter_backends = [SearchFilter]
     search_fields = ['name', 'name_ru', 'name_uz', 'name_en']
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(name="market_id", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter(name="category_id", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter(name="is_discount", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, default=False, required=False),
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         user = self.request.user
