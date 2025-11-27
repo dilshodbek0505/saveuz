@@ -25,6 +25,7 @@ class ProductView(ListAPIView):
             openapi.Parameter(name="market_id", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
             openapi.Parameter(name="category_id", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
             openapi.Parameter(name="is_discount", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, default=False, required=False),
+            openapi.Parameter(name="is_favorited", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, required=False),
         ]
     )
     def get(self, request, *args, **kwargs):
@@ -57,7 +58,14 @@ class ProductView(ListAPIView):
                 )
             )
         )
-        return qs.order_by('id')
+
+        is_favorited = self.request.query_params.get("is_favorited")
+        if is_favorited and is_favorited.lower() == "true":
+            qs = qs.filter(is_favorited=True)
+        elif is_favorited and is_favorited.lower() == "false":
+            qs = qs.filter(is_favorited=False)
+
+        return qs
 
 class ProductDetailView(RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
