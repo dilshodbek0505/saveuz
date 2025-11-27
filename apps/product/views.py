@@ -1,7 +1,7 @@
 from django.db.models import Count, Q, Exists, OuterRef
 
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import permissions
 
 from drf_yasg.utils import swagger_auto_schema
@@ -14,9 +14,11 @@ from apps.product.serializers import ProductSerializer
 class ProductView(ListAPIView):
     queryset = Product.objects.select_related("market", "category").prefetch_related("images")
     serializer_class = ProductSerializer
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['name', 'name_ru', 'name_uz', 'name_en']
     permission_classes = [permissions.IsAuthenticated]
+    ordering_fields = ['price']
+    ordering = ['-created_at']
 
     @swagger_auto_schema(
         manual_parameters=[
