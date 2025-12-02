@@ -12,6 +12,8 @@ User = get_user_model()
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(read_only=True)  # Phone numberni read_only qildik
+    
     class Meta:
         model = User
         fields = (
@@ -171,3 +173,106 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data['token'] = token.key
         
         return validated_data
+
+
+class PhoneNumberChangeSendOTPSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=32)
+
+    def get_lang(self):
+        res = self.context.get("request")
+        if res:
+            lang = res.headers.get("Accept-Language", "uz")
+        return lang or "uz"
+
+    def generate_code(self):
+        import secrets
+        return str(secrets.randbelow(90000) + 10000)
+
+    def get_text(self):
+        code = self.generate_code()
+        return code, f"Kodni hech kimga bermang! Saveuz mobil ilovasiga kirish uchun tasdiqlash kodi: {code}"
+
+    def validate_phone_number(self, value):
+        # Yangi phone number allaqachon mavjudligini tekshirish
+        if User.objects.filter(phone_number=value).exists():
+            lang = self.get_lang()
+            err_msg = "Bu telefon raqam allaqachon ishlatilmoqda"
+            if lang == "ru":
+                err_msg = "Этот номер телефона уже используется"
+            if lang == "en":
+                err_msg = "This phone number is already in use"
+            raise serializers.ValidationError(err_msg)
+        return value
+
+    def create(self, validated_data):
+        phone = validated_data.get("phone_number")
+        code, text = self.get_text()
+
+        # User ID'ni context'dan olish
+        request = self.context.get("request")
+        user_id = request.user.id if request and request.user.is_authenticated else None
+
+        # Cache key'ni user ID va yangi phone number bilan saqlash
+        cache_key = f"phone_change:{user_id}:{phone}"
+        cache.set(cache_key, code, timeout=60*2)
+
+        lang = self.get_lang()
+
+        sms_business = SMSBusiness(phone=f"998{phone}", text=text)
+        if sms_business.send_sms() != 200:
+            err_msg = "SMS yuborishda xatolik sodir bo'ldi"
+            if lang == "ru":
+                err_msg = "Произошла ошибка при отправке СМС."
+            if lang == "en":
+                err_msg = "An error occurred while sending SMS."
+
+            raise serializers.ValidationError({"msg": err_msg})
+
+        return validated_data
+
+
+class PhoneNumberChangeVerifySerializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=32)
+    code = serializers.CharField(max_length=5)
+
+    def get_lang(self):
+        res = self.context.get("request")
+        if res:
+            lang = res.headers.get("Accept-Language", "uz")
+        return lang or "uz"
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+
+        phone = attrs['phone_number']
+        code = attrs['code']
+
+        # User ID'ni context'dan olish
+        request = self.context.get("request")
+        user_id = request.user.id if request and request.user.is_authenticated else None
+
+        cache_key = f"phone_change:{user_id}:{phone}"
+        saved_code = cache.get(cache_key)
+
+        lang = self.get_lang()
+
+        if not saved_code or str(saved_code) != str(code):
+            err_msg = "Kod noto'g'ri yoki muddati tugagan"
+            if lang == "ru":
+                err_msg = "Код недействителен или просрочен."
+            if lang == "en":
+                err_msg = "The code is invalid or expired."
+
+            raise serializers.ValidationError({"msg": err_msg})
+
+        # Yangi phone number allaqachon mavjudligini tekshirish
+        if User.objects.filter(phone_number=phone).exists():
+            err_msg = "Bu telefon raqam allaqachon ishlatilmoqda"
+            if lang == "ru":
+                err_msg = "Этот номер телефона уже используется"
+            if lang == "en":
+                err_msg = "This phone number is already in use"
+            raise serializers.ValidationError({"phone_number": err_msg})
+
+        cache.delete(cache_key)
+        return attrs

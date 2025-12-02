@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from apps.main.views import BannerView, CategoryView, MarketView \
                             ,FavoriteViewSet, MarketDetailView, NotificationListView \
-                            ,ToggleNotificationAllowedView
+                            ,ToggleNotificationAllowedView, OfertaView
 
 
 router = DefaultRouter()
@@ -18,6 +18,8 @@ urlpatterns = [
 
     path("notifications/NotificationList/", NotificationListView.as_view(), name="notification-list"),
     path("notifications/ToggleNotificationAllowed/", ToggleNotificationAllowedView.as_view(), name="notifications-toggle-allowed"),
+
+    path("oferta/", OfertaView.as_view(), name="oferta-detail"),
 
     *router.urls,
 

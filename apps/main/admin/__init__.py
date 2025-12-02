@@ -5,3 +5,4 @@ from apps.main.admin.discount import DiscountAdmin
 from apps.main.admin.market import MarketAdmin
 from apps.main.admin.favorite import FavoriteAdmin
 from apps.main.admin.notification import NotificationAdmin, UserNotificationAdmin
+from apps.main.admin.oferta import OfertaAdmin
