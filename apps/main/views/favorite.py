@@ -6,6 +6,7 @@ from apps.main.serializers import FavoriteSerializer
 
 class FavoriteViewSet(mixins.CreateModelMixin,
                       mixins.ListModelMixin,
+                      mixins.DestroyModelMixin,
                       viewsets.GenericViewSet):
     serializer_class = FavoriteSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -32,3 +33,8 @@ class FavoriteViewSet(mixins.CreateModelMixin,
             favorite.save(update_fields=['is_active',])
         else:        
             serializer.save(user=self.request.user)
+
+    def perform_destroy(self, instance):
+        # Soft delete - is_active=False qilamiz
+        instance.is_active = False
+        instance.save(update_fields=['is_active'])
