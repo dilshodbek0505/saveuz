@@ -20,7 +20,8 @@ UNFOLD = {
         lambda request: "/static/css/unfold-custom.css",
     ],
     "SCRIPTS": [],
-    "THEME": "auto",  # 'light', 'dark', yoki 'auto'
+    "THEME": "auto",  # 'light', 'dark', yoki 'auto' - foydalanuvchi tizim sozlamalariga moslashadi
+    "SHOW_THEME_TOGGLE": True,  # Theme toggle button'ni ko'rsatish
     "COLORS": {
         "primary": {
             "50": "255 247 237",   # Very light orange
@@ -34,6 +35,21 @@ UNFOLD = {
             "800": "230 80 0",     # Very dark orange
             "900": "200 60 0",     # Darkest orange
             "950": "150 40 0",     # Almost black orange
+        },
+    },
+    "DARK": {
+        "primary": {
+            "50": "150 40 0",      # Dark mode uchun
+            "100": "200 60 0",
+            "200": "230 80 0",
+            "300": "255 100 0",
+            "400": "255 120 0",
+            "500": "255 140 0",    # Main orange (logo color)
+            "600": "255 165 79",
+            "700": "255 195 130",
+            "800": "255 220 177",
+            "900": "255 237 213",
+            "950": "255 247 237",
         },
     },
     "EXTENSIONS": {
