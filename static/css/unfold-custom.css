@@ -165,52 +165,8 @@ fieldset input[type="file"]:focus {
     box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
 }
 
-/* Checkbox styling */
-.admin input[type="checkbox"],
-fieldset input[type="checkbox"] {
-    width: 1.125rem;
-    height: 1.125rem;
-    border: 2px solid rgb(255 195 130);
-    border-radius: 0.25rem;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    accent-color: rgb(255 140 0);
-}
-
-.admin input[type="checkbox"]:checked,
-fieldset input[type="checkbox"]:checked {
-    background-color: rgb(255 140 0);
-    border-color: rgb(255 140 0);
-}
-
-.admin input[type="checkbox"]:focus,
-fieldset input[type="checkbox"]:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
-}
-
-/* Radio button styling */
-.admin input[type="radio"],
-fieldset input[type="radio"] {
-    width: 1.125rem;
-    height: 1.125rem;
-    border: 2px solid rgb(255 195 130);
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    accent-color: rgb(255 140 0);
-}
-
-.admin input[type="radio"]:checked,
-fieldset input[type="radio"]:checked {
-    background-color: rgb(255 140 0);
-    border-color: rgb(255 140 0);
-}
-
-.admin input[type="radio"]:focus,
-fieldset input[type="radio"]:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
-}
+/* Checkbox va Radio - Unfold'ning default stillarini ishlatish */
+/* Custom stillarni olib tashladik, Unfold'ning o'zining default toggle stillari ishlaydi */
 
 /* Inline forms styling */
 .inline-group select,
