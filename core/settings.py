@@ -41,7 +41,8 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    "jazzmin",
+    "unfold",
+    "unfold.contrib.filters",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -178,8 +179,8 @@ MEDIA_ROOT = "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# jazzmin
-from core.jazzmin_conf import *
+# unfold
+from core.unfold_conf import *
 
 
 REDIS_URL = env.str("REDIS_URL", "redis://127.0.0.1:6379/0")
