@@ -29,7 +29,8 @@ class ProductImageInline(admin.TabularInline):
 
 # ExportMixin va admin.ModelAdmin'dan meros olindi
 @admin.register(Product)
-class ProductAdmin(ExportMixin, admin.ModelAdmin): 
+class ProductAdmin(ExportMixin, admin.ModelAdmin):
+    icon_name = "inventory_2" 
     resource_class = ProductResource
     formats = [ImageAwareXLSX] # Export uchun formatlar saqlab qolindi
     list_display = ("id", "name", "market")

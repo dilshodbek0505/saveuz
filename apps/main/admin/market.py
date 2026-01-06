@@ -26,6 +26,7 @@ class ProductInline(admin.TabularInline):
 
 @admin.register(Market)
 class MarketAdmin(admin.ModelAdmin):
+    icon_name = "store"
     list_display = ("id", "name", "owner", "get_product_count")
     list_display_links = ("id", "name")
     inlines = [ProductInline]

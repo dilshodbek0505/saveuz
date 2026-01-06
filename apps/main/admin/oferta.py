@@ -6,6 +6,7 @@ from apps.main.models import Oferta
 
 @admin.register(Oferta)
 class OfertaAdmin(ModelAdmin):
+    icon_name = "description"
     list_display = ("id", "title", "is_active", "created_at", "updated_at")
     list_display_links = ("id", "title")
     list_filter = ("is_active", "created_at")
