@@ -275,3 +275,159 @@ fieldset input[type="file"]:focus {
 .related-widget-wrapper + .related-widget-wrapper {
     margin-top: 0.5rem;
 }
+
+/* Dark mode styles for inputs and selects */
+[data-theme="dark"],
+.dark,
+html[data-theme="dark"],
+html.dark {
+    /* Action dropdown select styling - dark mode */
+    #changelist-form select[name="action"],
+    #changelist-form select[name="action-select"],
+    #changelist-form select[name^="action"] {
+        background-color: rgb(200 60 0);
+        border-color: rgb(255 100 0);
+        color: rgb(255 247 237);
+    }
+
+    #changelist-form select[name="action"]:hover,
+    #changelist-form select[name="action-select"]:hover,
+    #changelist-form select[name^="action"]:hover {
+        border-color: rgb(255 120 0);
+        background-color: rgb(230 80 0);
+    }
+
+    #changelist-form select[name="action"]:focus,
+    #changelist-form select[name="action-select"]:focus,
+    #changelist-form select[name^="action"]:focus {
+        border-color: rgb(255 140 0);
+        box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+    }
+
+    /* All select elements - dark mode */
+    .admin select,
+    .admin select.form-select,
+    fieldset select,
+    .vSelectSingle select,
+    .vSelectMultiple select {
+        background-color: rgb(200 60 0);
+        border-color: rgb(255 100 0);
+        color: rgb(255 247 237);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23FF8C00' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    }
+
+    .admin select:hover,
+    .admin select.form-select:hover,
+    fieldset select:hover {
+        border-color: rgb(255 120 0);
+        background-color: rgb(230 80 0);
+    }
+
+    .admin select:focus,
+    .admin select.form-select:focus,
+    fieldset select:focus {
+        border-color: rgb(255 140 0);
+        box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+    }
+
+    /* Input fields - dark mode */
+    .admin input[type="text"],
+    .admin input[type="number"],
+    .admin input[type="email"],
+    .admin input[type="password"],
+    .admin input[type="url"],
+    .admin input[type="tel"],
+    .admin input[type="date"],
+    .admin input[type="datetime-local"],
+    .admin input[type="time"],
+    .admin input[type="search"],
+    .admin textarea,
+    .admin input.form-control,
+    .admin textarea.form-control,
+    fieldset input[type="text"],
+    fieldset input[type="number"],
+    fieldset input[type="email"],
+    fieldset textarea {
+        background-color: rgb(200 60 0);
+        border-color: rgb(255 100 0);
+        color: rgb(255 247 237);
+    }
+
+    .admin input[type="text"]:hover,
+    .admin input[type="number"]:hover,
+    .admin input[type="email"]:hover,
+    .admin input[type="password"]:hover,
+    .admin input[type="url"]:hover,
+    .admin input[type="tel"]:hover,
+    .admin input[type="date"]:hover,
+    .admin input[type="datetime-local"]:hover,
+    .admin input[type="time"]:hover,
+    .admin input[type="search"]:hover,
+    .admin textarea:hover,
+    .admin input.form-control:hover,
+    .admin textarea.form-control:hover,
+    fieldset input:hover,
+    fieldset textarea:hover {
+        border-color: rgb(255 120 0);
+        background-color: rgb(230 80 0);
+    }
+
+    .admin input[type="text"]:focus,
+    .admin input[type="number"]:focus,
+    .admin input[type="email"]:focus,
+    .admin input[type="password"]:focus,
+    .admin input[type="url"]:focus,
+    .admin input[type="tel"]:focus,
+    .admin input[type="date"]:focus,
+    .admin input[type="datetime-local"]:focus,
+    .admin input[type="time"]:focus,
+    .admin input[type="search"]:focus,
+    .admin textarea:focus,
+    .admin input.form-control:focus,
+    .admin textarea.form-control:focus,
+    fieldset input:focus,
+    fieldset textarea:focus {
+        border-color: rgb(255 140 0);
+        box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+        background-color: rgb(200 60 0);
+        color: rgb(255 247 237);
+    }
+
+    /* File input - dark mode */
+    .admin input[type="file"],
+    fieldset input[type="file"] {
+        background-color: rgb(200 60 0);
+        border-color: rgb(255 100 0);
+        color: rgb(255 247 237);
+    }
+
+    .admin input[type="file"]:hover,
+    fieldset input[type="file"]:hover {
+        border-color: rgb(255 120 0);
+        background-color: rgb(230 80 0);
+    }
+
+    .admin input[type="file"]:focus,
+    fieldset input[type="file"]:focus {
+        border-color: rgb(255 140 0);
+        box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+    }
+
+    /* Inline forms - dark mode */
+    .inline-group select,
+    .inline-group input[type="text"],
+    .inline-group input[type="number"],
+    .inline-group textarea {
+        background-color: rgb(200 60 0);
+        border-color: rgb(255 100 0);
+        color: rgb(255 247 237);
+    }
+
+    .inline-group select:focus,
+    .inline-group input[type="text"]:focus,
+    .inline-group input[type="number"]:focus,
+    .inline-group textarea:focus {
+        border-color: rgb(255 140 0);
+        box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+    }
+}
