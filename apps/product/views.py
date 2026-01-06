@@ -18,7 +18,6 @@ class ProductView(ListAPIView):
     search_fields = ['name', 'name_ru', 'name_uz', 'name_en']
     permission_classes = [permissions.IsAuthenticated]
     ordering_fields = ['price']
-    ordering = ['?']
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -64,7 +63,9 @@ class ProductView(ListAPIView):
             qs = qs.filter(is_favorited=True)
         elif is_favorited and is_favorited.lower() == "false":
             qs = qs.filter(is_favorited=False)
-
+        
+        qs = qs.order_by('?')
+        
         return qs
 
 class ProductDetailView(RetrieveAPIView):
