@@ -18,7 +18,7 @@ class ProductView(ListAPIView):
     search_fields = ['name', 'name_ru', 'name_uz', 'name_en']
     permission_classes = [permissions.IsAuthenticated]
     ordering_fields = ['price']
-    ordering = ['-created_at']
+    ordering = ['?']
 
     @swagger_auto_schema(
         manual_parameters=[
