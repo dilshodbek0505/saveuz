@@ -32,20 +32,13 @@ class DeleteAccountView(APIView):
     def delete(self, request):
         user = request.user
         
-        # Token'ni o'chirish
         try:
             Token.objects.filter(user=user).delete()
         except Exception:
             pass
         
-        # Soft delete - user'ni deactivate qilish
-        user.is_active = False
-        user.save()
-        
-        return Response(
-            {"message": "Account successfully deactivated"},
-            status=status.HTTP_200_OK
-        )
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PhoneNumberChangeSendOTPView(generics.CreateAPIView):
