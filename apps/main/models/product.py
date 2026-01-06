@@ -8,8 +8,8 @@ from apps.main.models import BaseModel, Market
 # Image validation constants
 MAX_IMAGE_SIZE_MB = 5
 MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024
-MAX_IMAGE_WIDTH = 1080
-MAX_IMAGE_HEIGHT = 1920
+MAX_IMAGE_WIDTH = 1024
+MAX_IMAGE_HEIGHT = 1024
 
 
 def validate_image_size(image):
