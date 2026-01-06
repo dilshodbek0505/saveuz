@@ -13,7 +13,7 @@ UNFOLD = {
     "ENVIRONMENT": None,
     "DASHBOARD_CALLBACK": None,
     "LOGIN": {
-        "image": "/static/logo.png",
+        "image": None,
         "redirect_after": None,
     },
     "STYLES": [

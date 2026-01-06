@@ -228,3 +228,94 @@ fieldset input[type="radio"]:focus {
     border-color: rgb(255 140 0);
     box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
 }
+
+/* Related widget wrapper - horizontal action icons */
+.related-widget-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    flex-wrap: wrap !important;
+    flex-direction: row !important;
+}
+
+.related-widget-wrapper > select,
+.related-widget-wrapper > input[type="text"],
+.related-widget-wrapper > input[type="number"] {
+    flex: 1;
+    min-width: 200px;
+    margin-right: 0.5rem;
+}
+
+/* Related widget links - make horizontal */
+.related-widget-wrapper ul {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    align-items: center !important;
+    vertical-align: middle !important;
+}
+
+.related-widget-wrapper li {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+.related-widget-wrapper a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    border-radius: 0.375rem !important;
+    transition: all 0.2s ease-in-out !important;
+    text-decoration: none !important;
+    vertical-align: middle !important;
+}
+
+.related-widget-wrapper a:hover {
+    transform: scale(1.1);
+}
+
+/* Related lookup icon styling */
+.related-lookup {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    vertical-align: middle !important;
+    margin-left: 0.5rem !important;
+}
+
+.related-lookup a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    border-radius: 0.375rem !important;
+    transition: all 0.2s ease-in-out !important;
+    text-decoration: none !important;
+    margin: 0 !important;
+    margin-left: 0.25rem !important;
+    vertical-align: middle !important;
+}
+
+/* Force horizontal for all related widget elements */
+.related-widget-wrapper .related-lookup,
+.related-widget-wrapper .related-lookup-wrapper {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    vertical-align: middle !important;
+}
+
+/* Stacked related widgets - make sure they're horizontal */
+.related-widget-wrapper + .related-widget-wrapper {
+    margin-top: 0.5rem;
+}
