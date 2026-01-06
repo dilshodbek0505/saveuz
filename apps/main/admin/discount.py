@@ -1,10 +1,11 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 
 from apps.main.models import Discount, Product
 
 
 @admin.register(Discount)
-class DiscountAdmin(admin.ModelAdmin):
+class DiscountAdmin(ModelAdmin):
     icon_name = "local_offer"
     list_display = ("id", "product", "type", "value", "is_active")
     list_display_links = ("id", "product",)

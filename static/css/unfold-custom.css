@@ -1,0 +1,230 @@
+/* Unfold custom styles for inputs and selects */
+/* Using orange color scheme matching the logo */
+
+/* Action dropdown select styling */
+#changelist-form select[name="action"],
+#changelist-form select[name="action-select"],
+#changelist-form select[name^="action"] {
+    appearance: none;
+    background-color: rgb(255 247 237);
+    border: 1px solid rgb(255 220 177);
+    border-radius: 0.5rem;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: rgb(200 60 0);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    min-width: 150px;
+    font-weight: 500;
+}
+
+#changelist-form select[name="action"]:hover,
+#changelist-form select[name="action-select"]:hover,
+#changelist-form select[name^="action"]:hover {
+    border-color: rgb(255 165 79);
+    background-color: rgb(255 237 213);
+}
+
+#changelist-form select[name="action"]:focus,
+#changelist-form select[name="action-select"]:focus,
+#changelist-form select[name^="action"]:focus {
+    outline: none;
+    border-color: rgb(255 140 0);
+    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}
+
+/* All select elements in admin forms */
+.admin select,
+.admin select.form-select,
+fieldset select,
+.vSelectSingle select,
+.vSelectMultiple select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23FF8C00' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25em 1.25em;
+    background-color: rgb(255 247 237);
+    border: 1px solid rgb(255 220 177);
+    border-radius: 0.5rem;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: rgb(200 60 0);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.admin select:hover,
+.admin select.form-select:hover,
+fieldset select:hover {
+    border-color: rgb(255 165 79);
+    background-color: rgb(255 237 213);
+}
+
+.admin select:focus,
+.admin select.form-select:focus,
+fieldset select:focus {
+    outline: none;
+    border-color: rgb(255 140 0);
+    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}
+
+/* Input fields styling */
+.admin input[type="text"],
+.admin input[type="number"],
+.admin input[type="email"],
+.admin input[type="password"],
+.admin input[type="url"],
+.admin input[type="tel"],
+.admin input[type="date"],
+.admin input[type="datetime-local"],
+.admin input[type="time"],
+.admin input[type="search"],
+.admin textarea,
+.admin input.form-control,
+.admin textarea.form-control,
+fieldset input[type="text"],
+fieldset input[type="number"],
+fieldset input[type="email"],
+fieldset textarea {
+    appearance: none;
+    background-color: rgb(255 247 237);
+    border: 1px solid rgb(255 220 177);
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: rgb(200 60 0);
+    transition: all 0.2s ease-in-out;
+    width: 100%;
+}
+
+.admin input[type="text"]:hover,
+.admin input[type="number"]:hover,
+.admin input[type="email"]:hover,
+.admin input[type="password"]:hover,
+.admin input[type="url"]:hover,
+.admin input[type="tel"]:hover,
+.admin input[type="date"]:hover,
+.admin input[type="datetime-local"]:hover,
+.admin input[type="time"]:hover,
+.admin input[type="search"]:hover,
+.admin textarea:hover,
+.admin input.form-control:hover,
+.admin textarea.form-control:hover,
+fieldset input:hover,
+fieldset textarea:hover {
+    border-color: rgb(255 165 79);
+    background-color: rgb(255 237 213);
+}
+
+.admin input[type="text"]:focus,
+.admin input[type="number"]:focus,
+.admin input[type="email"]:focus,
+.admin input[type="password"]:focus,
+.admin input[type="url"]:focus,
+.admin input[type="tel"]:focus,
+.admin input[type="date"]:focus,
+.admin input[type="datetime-local"]:focus,
+.admin input[type="time"]:focus,
+.admin input[type="search"]:focus,
+.admin textarea:focus,
+.admin input.form-control:focus,
+.admin textarea.form-control:focus,
+fieldset input:focus,
+fieldset textarea:focus {
+    outline: none;
+    border-color: rgb(255 140 0);
+    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+    background-color: white;
+}
+
+/* File input styling */
+.admin input[type="file"],
+fieldset input[type="file"] {
+    padding: 0.5rem;
+    border: 1px solid rgb(255 220 177);
+    border-radius: 0.5rem;
+    background-color: rgb(255 247 237);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.admin input[type="file"]:hover,
+fieldset input[type="file"]:hover {
+    border-color: rgb(255 165 79);
+    background-color: rgb(255 237 213);
+}
+
+.admin input[type="file"]:focus,
+fieldset input[type="file"]:focus {
+    outline: none;
+    border-color: rgb(255 140 0);
+    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}
+
+/* Checkbox styling */
+.admin input[type="checkbox"],
+fieldset input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 2px solid rgb(255 195 130);
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    accent-color: rgb(255 140 0);
+}
+
+.admin input[type="checkbox"]:checked,
+fieldset input[type="checkbox"]:checked {
+    background-color: rgb(255 140 0);
+    border-color: rgb(255 140 0);
+}
+
+.admin input[type="checkbox"]:focus,
+fieldset input[type="checkbox"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}
+
+/* Radio button styling */
+.admin input[type="radio"],
+fieldset input[type="radio"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 2px solid rgb(255 195 130);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    accent-color: rgb(255 140 0);
+}
+
+.admin input[type="radio"]:checked,
+fieldset input[type="radio"]:checked {
+    background-color: rgb(255 140 0);
+    border-color: rgb(255 140 0);
+}
+
+.admin input[type="radio"]:focus,
+fieldset input[type="radio"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}
+
+/* Inline forms styling */
+.inline-group select,
+.inline-group input[type="text"],
+.inline-group input[type="number"],
+.inline-group textarea {
+    border-color: rgb(255 220 177);
+    background-color: rgb(255 247 237);
+}
+
+.inline-group select:focus,
+.inline-group input[type="text"]:focus,
+.inline-group input[type="number"]:focus,
+.inline-group textarea:focus {
+    border-color: rgb(255 140 0);
+    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}

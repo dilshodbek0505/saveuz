@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 # ImportExportModelAdmin o'rniga faqat ExportMixin import qilindi
 from import_export.admin import ExportMixin 
+from unfold.admin import ModelAdmin
 
 from apps.main.forms.product import ProductImagesFormMixin
 from apps.main.models import Product, ProductImage
@@ -27,9 +28,9 @@ class ProductImageInline(admin.TabularInline):
     fields = ("image", "position")
 
 
-# ExportMixin va admin.ModelAdmin'dan meros olindi
+# ExportMixin va ModelAdmin'dan meros olindi
 @admin.register(Product)
-class ProductAdmin(ExportMixin, admin.ModelAdmin):
+class ProductAdmin(ExportMixin, ModelAdmin):
     icon_name = "inventory_2" 
     resource_class = ProductResource
     formats = [ImageAwareXLSX] # Export uchun formatlar saqlab qolindi

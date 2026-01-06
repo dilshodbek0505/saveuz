@@ -16,7 +16,9 @@ UNFOLD = {
         "image": "/static/logo.png",
         "redirect_after": None,
     },
-    "STYLES": [],
+    "STYLES": [
+        lambda request: "/static/css/unfold-custom.css",
+    ],
     "SCRIPTS": [],
     "THEME": "auto",  # 'light', 'dark', yoki 'auto'
     "COLORS": {

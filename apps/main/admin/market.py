@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+from unfold.admin import ModelAdmin
 
 from apps.main.models import Market, Product
 
@@ -25,7 +26,7 @@ class ProductInline(admin.TabularInline):
 
 
 @admin.register(Market)
-class MarketAdmin(admin.ModelAdmin):
+class MarketAdmin(ModelAdmin):
     icon_name = "store"
     list_display = ("id", "name", "owner", "get_product_count")
     list_display_links = ("id", "name")
