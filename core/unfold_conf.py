@@ -20,8 +20,8 @@ UNFOLD = {
         lambda request: "/static/css/unfold-custom.css",
     ],
     "SCRIPTS": [],
-    "THEME": "auto",  # 'light', 'dark', yoki 'auto' - foydalanuvchi tizim sozlamalariga moslashadi
-    "SHOW_THEME_TOGGLE": True,  # Theme toggle button'ni ko'rsatish
+    # THEME parametri bo'lmasa, Unfold default theme toggle button'ni ko'rsatadi
+    # Foydalanuvchi header'dagi button orqali light/dark mode o'rtasida o'zgartirishi mumkin
     "COLORS": {
         "primary": {
             "50": "255 247 237",   # Very light orange
