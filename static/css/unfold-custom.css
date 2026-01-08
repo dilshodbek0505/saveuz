@@ -276,6 +276,234 @@ fieldset input[type="file"]:focus {
     margin-top: 0.5rem;
 }
 
+/* Admin buttons styling - Unfold style */
+.admin .button,
+.admin input[type="submit"],
+.admin button[type="submit"],
+.admin .submit-row input,
+.admin .submit-row button,
+.admin .object-tools a,
+.admin .object-tools button,
+.admin .addlink,
+.admin .changelink,
+.admin .deletelink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+/* Primary/Add buttons */
+.admin .button,
+.admin input[type="submit"].default,
+.admin button[type="submit"].default,
+.admin .object-tools .addlink,
+.admin .object-tools a.addlink {
+    background-color: rgb(255 140 0);
+    color: white;
+    border-color: rgb(255 140 0);
+}
+
+.admin .button:hover,
+.admin input[type="submit"].default:hover,
+.admin button[type="submit"].default:hover,
+.admin .object-tools .addlink:hover,
+.admin .object-tools a.addlink:hover {
+    background-color: rgb(255 120 0);
+    border-color: rgb(255 120 0);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(255, 140, 0, 0.2);
+}
+
+.admin .button:active,
+.admin input[type="submit"].default:active,
+.admin button[type="submit"].default:active,
+.admin .object-tools .addlink:active,
+.admin .object-tools a.addlink:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px -1px rgba(255, 140, 0, 0.2);
+}
+
+/* Secondary buttons */
+.admin .button-secondary,
+.admin input[type="button"],
+.admin button[type="button"],
+.admin .object-tools .changelink,
+.admin .object-tools a.changelink {
+    background-color: transparent;
+    color: rgb(255 140 0);
+    border-color: rgb(255 140 0);
+}
+
+.admin .button-secondary:hover,
+.admin input[type="button"]:hover,
+.admin button[type="button"]:hover,
+.admin .object-tools .changelink:hover,
+.admin .object-tools a.changelink:hover {
+    background-color: rgb(255 247 237);
+    border-color: rgb(255 165 79);
+}
+
+/* Delete buttons */
+.admin .deletelink,
+.admin .object-tools .deletelink,
+.admin .object-tools a.deletelink {
+    background-color: rgb(239 68 68);
+    color: white;
+    border-color: rgb(239 68 68);
+}
+
+.admin .deletelink:hover,
+.admin .object-tools .deletelink:hover,
+.admin .object-tools a.deletelink:hover {
+    background-color: rgb(220 38 38);
+    border-color: rgb(220 38 38);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);
+}
+
+/* Object tools container */
+.admin .object-tools {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.admin .object-tools::before {
+    display: none;
+}
+
+/* Submit row buttons */
+.admin .submit-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 1rem;
+    background-color: transparent;
+    border-top: 1px solid rgb(255 220 177);
+    margin-top: 1rem;
+}
+
+.admin .submit-row input,
+.admin .submit-row button {
+    margin: 0;
+}
+
+/* Dark mode for buttons */
+[data-theme="dark"] .admin .button,
+[data-theme="dark"] .admin input[type="submit"].default,
+[data-theme="dark"] .admin button[type="submit"].default,
+[data-theme="dark"] .admin .object-tools .addlink,
+[data-theme="dark"] .admin .object-tools a.addlink,
+.dark .admin .button,
+.dark .admin input[type="submit"].default,
+.dark .admin button[type="submit"].default,
+.dark .admin .object-tools .addlink,
+.dark .admin .object-tools a.addlink,
+html[data-theme="dark"] .admin .button,
+html[data-theme="dark"] .admin input[type="submit"].default,
+html[data-theme="dark"] .admin button[type="submit"].default,
+html[data-theme="dark"] .admin .object-tools .addlink,
+html[data-theme="dark"] .admin .object-tools a.addlink,
+html.dark .admin .button,
+html.dark .admin input[type="submit"].default,
+html.dark .admin button[type="submit"].default,
+html.dark .admin .object-tools .addlink,
+html.dark .admin .object-tools a.addlink {
+    background-color: rgb(255 140 0);
+    color: white;
+    border-color: rgb(255 140 0);
+}
+
+[data-theme="dark"] .admin .button:hover,
+[data-theme="dark"] .admin input[type="submit"].default:hover,
+[data-theme="dark"] .admin button[type="submit"].default:hover,
+[data-theme="dark"] .admin .object-tools .addlink:hover,
+[data-theme="dark"] .admin .object-tools a.addlink:hover,
+.dark .admin .button:hover,
+.dark .admin input[type="submit"].default:hover,
+.dark .admin button[type="submit"].default:hover,
+.dark .admin .object-tools .addlink:hover,
+.dark .admin .object-tools a.addlink:hover,
+html[data-theme="dark"] .admin .button:hover,
+html[data-theme="dark"] .admin input[type="submit"].default:hover,
+html[data-theme="dark"] .admin button[type="submit"].default:hover,
+html[data-theme="dark"] .admin .object-tools .addlink:hover,
+html[data-theme="dark"] .admin .object-tools a.addlink:hover,
+html.dark .admin .button:hover,
+html.dark .admin input[type="submit"].default:hover,
+html.dark .admin button[type="submit"].default:hover,
+html.dark .admin .object-tools .addlink:hover,
+html.dark .admin .object-tools a.addlink:hover {
+    background-color: rgb(255 120 0);
+    border-color: rgb(255 120 0);
+}
+
+[data-theme="dark"] .admin .button-secondary,
+[data-theme="dark"] .admin input[type="button"],
+[data-theme="dark"] .admin button[type="button"],
+[data-theme="dark"] .admin .object-tools .changelink,
+[data-theme="dark"] .admin .object-tools a.changelink,
+.dark .admin .button-secondary,
+.dark .admin input[type="button"],
+.dark .admin button[type="button"],
+.dark .admin .object-tools .changelink,
+.dark .admin .object-tools a.changelink,
+html[data-theme="dark"] .admin .button-secondary,
+html[data-theme="dark"] .admin input[type="button"],
+html[data-theme="dark"] .admin button[type="button"],
+html[data-theme="dark"] .admin .object-tools .changelink,
+html[data-theme="dark"] .admin .object-tools a.changelink,
+html.dark .admin .button-secondary,
+html.dark .admin input[type="button"],
+html.dark .admin button[type="button"],
+html.dark .admin .object-tools .changelink,
+html.dark .admin .object-tools a.changelink {
+    background-color: transparent;
+    color: rgb(255 140 0);
+    border-color: rgb(255 140 0);
+}
+
+[data-theme="dark"] .admin .button-secondary:hover,
+[data-theme="dark"] .admin input[type="button"]:hover,
+[data-theme="dark"] .admin button[type="button"]:hover,
+[data-theme="dark"] .admin .object-tools .changelink:hover,
+[data-theme="dark"] .admin .object-tools a.changelink:hover,
+.dark .admin .button-secondary:hover,
+.dark .admin input[type="button"]:hover,
+.dark .admin button[type="button"]:hover,
+.dark .admin .object-tools .changelink:hover,
+.dark .admin .object-tools a.changelink:hover,
+html[data-theme="dark"] .admin .button-secondary:hover,
+html[data-theme="dark"] .admin input[type="button"]:hover,
+html[data-theme="dark"] .admin button[type="button"]:hover,
+html[data-theme="dark"] .admin .object-tools .changelink:hover,
+html[data-theme="dark"] .admin .object-tools a.changelink:hover,
+html.dark .admin .button-secondary:hover,
+html.dark .admin input[type="button"]:hover,
+html.dark .admin button[type="button"]:hover,
+html.dark .admin .object-tools .changelink:hover,
+html.dark .admin .object-tools a.changelink:hover {
+    background-color: rgb(200 60 0);
+    border-color: rgb(255 165 79);
+}
+
+[data-theme="dark"] .admin .submit-row,
+.dark .admin .submit-row,
+html[data-theme="dark"] .admin .submit-row,
+html.dark .admin .submit-row {
+    border-top-color: rgb(255 100 0);
+}
+
 /* Dark mode styles for inputs and selects */
 [data-theme="dark"],
 .dark,
