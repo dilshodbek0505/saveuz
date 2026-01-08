@@ -63,10 +63,93 @@ UNFOLD = {
     },
     "SIDEBAR": {
         "show_search": True,
-        "show_all_applications": True,  # Django admin o'zi permission'larga asoslangan holda modellarni ko'rsatadi
-        # Custom navigation o'rniga show_all_applications=True ishlatiladi
-        # Bu permission'larga asoslangan holda avtomatik ko'rsatadi
-        "navigation": [],
+        "show_all_applications": False,  # Custom navigation ishlatamiz
+        "navigation": [
+            {
+                "title": "Navigation",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Dashboard",
+                        "icon": "dashboard",
+                        "link": lambda request: "/admin/",
+                        "permission": lambda request: request.user.is_staff,
+                    },
+                    {
+                        "title": "Products",
+                        "icon": "inventory_2",
+                        "link": lambda request: "/admin/main/product/",
+                        "permission": lambda request: request.user.has_perm("main.view_product"),
+                    },
+                    {
+                        "title": "Categories",
+                        "icon": "category",
+                        "link": lambda request: "/admin/main/category/",
+                        "permission": lambda request: request.user.has_perm("main.view_category"),
+                    },
+                    {
+                        "title": "Markets",
+                        "icon": "store",
+                        "link": lambda request: "/admin/main/market/",
+                        "permission": lambda request: request.user.has_perm("main.view_market"),
+                    },
+                    {
+                        "title": "Banners",
+                        "icon": "image",
+                        "link": lambda request: "/admin/main/banner/",
+                        "permission": lambda request: request.user.has_perm("main.view_banner"),
+                    },
+                    {
+                        "title": "Discounts",
+                        "icon": "local_offer",
+                        "link": lambda request: "/admin/main/discount/",
+                        "permission": lambda request: request.user.has_perm("main.view_discount"),
+                    },
+                    {
+                        "title": "Favorites",
+                        "icon": "bookmark",
+                        "link": lambda request: "/admin/main/favorite/",
+                        "permission": lambda request: request.user.has_perm("main.view_favorite"),
+                    },
+                    {
+                        "title": "Notifications",
+                        "icon": "notifications",
+                        "link": lambda request: "/admin/main/notification/",
+                        "permission": lambda request: request.user.has_perm("main.view_notification"),
+                    },
+                    {
+                        "title": "User Notifications",
+                        "icon": "notifications_active",
+                        "link": lambda request: "/admin/main/usernotification/",
+                        "permission": lambda request: request.user.has_perm("main.view_usernotification"),
+                    },
+                    {
+                        "title": "Oferta",
+                        "icon": "description",
+                        "link": lambda request: "/admin/main/oferta/",
+                        "permission": lambda request: request.user.has_perm("main.view_oferta"),
+                    },
+                ],
+            },
+            {
+                "title": "Authentication",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Users",
+                        "icon": "person",
+                        "link": lambda request: "/admin/user/user/",
+                        "permission": lambda request: request.user.has_perm("user.view_user"),
+                    },
+                    {
+                        "title": "Groups",
+                        "icon": "group",
+                        "link": lambda request: "/admin/auth/group/",
+                        "permission": lambda request: request.user.has_perm("auth.view_group"),
+                    },
+                ],
+            },
+        ],
     },
     "TABS": [],
 }
