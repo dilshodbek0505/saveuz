@@ -63,81 +63,10 @@ UNFOLD = {
     },
     "SIDEBAR": {
         "show_search": True,
-        "show_all_applications": False,
-        "navigation": [
-            {
-                "title": "Navigation",
-                "separator": True,
-                "items": [
-                    {
-                        "title": "Dashboard",
-                        "icon": "dashboard",
-                        "link": lambda request: "/admin/",
-                    },
-                    {
-                        "title": "Products",
-                        "icon": "inventory_2",
-                        "link": lambda request: "/admin/main/product/",
-                    },
-                    {
-                        "title": "Categories",
-                        "icon": "category",
-                        "link": lambda request: "/admin/main/category/",
-                    },
-                    {
-                        "title": "Markets",
-                        "icon": "store",
-                        "link": lambda request: "/admin/main/market/",
-                    },
-                    {
-                        "title": "Banners",
-                        "icon": "image",
-                        "link": lambda request: "/admin/main/banner/",
-                    },
-                    {
-                        "title": "Discounts",
-                        "icon": "local_offer",
-                        "link": lambda request: "/admin/main/discount/",
-                    },
-                    {
-                        "title": "Favorites",
-                        "icon": "bookmark",
-                        "link": lambda request: "/admin/main/favorite/",
-                    },
-                    {
-                        "title": "Notifications",
-                        "icon": "notifications",
-                        "link": lambda request: "/admin/main/notification/",
-                    },
-                    {
-                        "title": "User Notifications",
-                        "icon": "notifications_active",
-                        "link": lambda request: "/admin/main/usernotification/",
-                    },
-                    {
-                        "title": "Oferta",
-                        "icon": "description",
-                        "link": lambda request: "/admin/main/oferta/",
-                    },
-                ],
-            },
-            {
-                "title": "Authentication",
-                "separator": True,
-                "items": [
-                    {
-                        "title": "Users",
-                        "icon": "person",
-                        "link": lambda request: "/admin/user/user/",
-                    },
-                    {
-                        "title": "Groups",
-                        "icon": "group",
-                        "link": lambda request: "/admin/auth/group/",
-                    },
-                ],
-            },
-        ],
+        "show_all_applications": True,  # Django admin o'zi permission'larga asoslangan holda modellarni ko'rsatadi
+        # Custom navigation o'rniga show_all_applications=True ishlatiladi
+        # Bu permission'larga asoslangan holda avtomatik ko'rsatadi
+        "navigation": [],
     },
     "TABS": [],
 }
