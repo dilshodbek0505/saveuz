@@ -23,10 +23,12 @@ click-repl==0.3.0
 cryptography==45.0.7
 diff-match-patch==20241021
 Django==5.2.5
+django-cors-headers==4.9.0
 django-import-export==4.3.9
-django-unfold==0.30.0
+django-jazzmin==3.0.1
 django-modeltranslation==0.19.16
 django-redis==6.0.0
+django-unfold==0.30.0
 djangorestframework==3.16.1
 drf-yasg==1.21.10
 et_xmlfile==2.0.0
