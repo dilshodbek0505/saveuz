@@ -1,14 +1,22 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
+from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
-User = get_user_model()
+from apps.user.models import User
+from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
+from unfold.admin import ModelAdmin
 
+
+admin.site.unregister(Group)
 
 @admin.register(User)
-class CustomUserAdmin(UserAdmin):
+class UserAdmin(BaseUserAdmin, ModelAdmin):
     icon_name = "person"
+    form = UserChangeForm
+    add_form = UserCreationForm
+    change_password_form = AdminPasswordChangeForm
     fieldsets = (
         (None, {"fields": ("phone_number", "password")}),
         (_("Personal info"), {"fields": ("first_name", "last_name", "logo")}),
@@ -28,13 +36,10 @@ class CustomUserAdmin(UserAdmin):
     )
 
     add_fieldsets = (
-        (
-            None,
-            {
-                "classes": ("wide",),
-                "fields": ("phone_number", "usable_password", "password1", "password2"),
-            },
-        ),
+        (None, {
+            "classes": ("wide",),
+            "fields": ("phone_number", "password1", "password2"),
+        }),
     )
     
     list_display = ("phone_number", "first_name", "last_name", "is_staff")
@@ -45,3 +50,11 @@ class CustomUserAdmin(UserAdmin):
         "groups",
         "user_permissions",
     )
+
+
+@admin.register(Group)
+class GroupAdmin(BaseGroupAdmin, ModelAdmin):
+    icon_name = "group"
+    list_display = ("name",)
+    search_fields = ("name",)
+    filter_horizontal = ("permissions",)

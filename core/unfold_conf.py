@@ -1,6 +1,7 @@
 UNFOLD = {
     "SITE_TITLE": "SaveUz Admin",
     "SITE_HEADER": "SaveUz",
+    "SITE_NAME": "SaveUz",
     "SITE_URL": "https://saveuz.org/",
     "SITE_ICON": "speed",
     "SITE_LOGO": {
@@ -16,9 +17,9 @@ UNFOLD = {
         "image": None,
         "redirect_after": None,
     },
-    "STYLES": [
-        lambda request: "/static/css/unfold-custom.css",
-    ],
+    # "STYLES": [
+    #     lambda request: "/static/css/unfold-custom.css",
+    # ], # commentdan olinmasin
     "SCRIPTS": [],
     # THEME parametri bo'lmasa, Unfold default theme toggle button'ni ko'rsatadi
     # Foydalanuvchi header'dagi button orqali light/dark mode o'rtasida o'zgartirishi mumkin
