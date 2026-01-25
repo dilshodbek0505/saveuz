@@ -1,0 +1,39 @@
+name: saveuz-deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy backend
+        run: |
+          set -e
+
+          cd /var/www/saveuz
+
+          echo "📥 Pulling code"
+          git pull origin main
+
+          echo "🐍 Activate venv"
+          source venv/bin/activate
+
+          echo "📦 Install requirements"
+          pip install -r requirements.txt
+
+          echo "🧱 Migrations"
+          python manage.py migrate --noinput
+
+          echo "🎨 Collect static"
+          python manage.py collectstatic --noinput
+
+          echo "🔁 Restart supervisor"
+          supervisorctl restart saveuz
+
+          echo "✅ Deploy finished"
