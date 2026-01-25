@@ -34,6 +34,6 @@ jobs:
           python manage.py collectstatic --noinput
 
           echo "🔁 Restart supervisor"
-          supervisorctl restart saveuz
+          sudo supervisorctl restart saveuz
 
           echo "✅ Deploy finished"
