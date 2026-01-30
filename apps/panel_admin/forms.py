@@ -29,6 +29,21 @@ class ProductBulkForm(ProductImagesFormMixin, forms.ModelForm):
             if "bulk-input" not in existing.split():
                 field.widget.attrs["class"] = (existing + " bulk-input").strip()
 
+    def clean(self):
+        cleaned = super().clean()
+        missing = []
+        if not cleaned.get("name"):
+            missing.append("name")
+        if not cleaned.get("description"):
+            missing.append("description")
+        if not cleaned.get("category"):
+            missing.append("category")
+        if missing:
+            raise forms.ValidationError(
+                "Missing required fields: " + ", ".join(missing)
+            )
+        return cleaned
+
 
 ProductBulkFormSet = modelformset_factory(
     Product,

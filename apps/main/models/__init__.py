@@ -1,6 +1,6 @@
 from apps.main.models.base_model import BaseModel
 from apps.main.models.market import Market
-from apps.main.models.product import Product, ProductImage
+from apps.main.models.product import CommonProduct, CommonProductImage, Product, ProductImage
 from apps.main.models.banner import Banner
 from apps.main.models.discount import Discount
 from apps.main.models.category import Category

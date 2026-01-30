@@ -21,11 +21,15 @@ class ProductAdmin(ExportMixin, ModelAdmin):
     icon_name = "inventory_2" 
     resource_class = ProductResource
     formats = [ImageAwareXLSX] # Export uchun formatlar saqlab qolindi
-    list_display = ("id", "name", "market")
-    list_display_links = ("id", "name")
-    search_fields = ("name", "market__name")
+    list_display = ("id", "display_name", "market")
+    list_display_links = ("id", "display_name")
+    search_fields = ("name", "common_product__name", "market__name")
     readonly_fields = ("discount_value", "discount_price", "discount_type")
     inlines = (ProductImageInline,)
+
+    @admin.display(description=_("Name"))
+    def display_name(self, obj):
+        return obj.resolved_name
 
     def get_queryset(self, request):
         user = request.user

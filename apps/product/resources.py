@@ -232,6 +232,13 @@ class ProductResource(resources.ModelResource):
         file_field = product.primary_image_file
         return file_field.name if file_field else ""
 
+    def dehydrate_name(self, product):
+        return product.resolved_name or ""
+
+    def dehydrate_category(self, product):
+        category = product.resolved_category
+        return category.name if category else ""
+
     def before_import_row(self, row, **kwargs):
         logger.info("ProductResource: preparing row for product '%s'", row.get("name"))
         return super().before_import_row(row, **kwargs)

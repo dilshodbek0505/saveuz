@@ -68,10 +68,81 @@ def validate_image_dimensions(image):
                     pass
 
 
-class Product(BaseModel):
+class CommonProduct(BaseModel):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Price"))
     description = models.TextField(verbose_name=_("Description"))
+    category = models.ForeignKey(
+        "main.Category",
+        on_delete=models.PROTECT,
+        related_name="common_products",
+        verbose_name=_("Category"),
+    )
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def primary_image(self):
+        if hasattr(self, "_primary_image_cache"):
+            return self._primary_image_cache
+
+        if hasattr(self, "_prefetched_objects_cache") and "images" in self._prefetched_objects_cache:
+            images = sorted(
+                self._prefetched_objects_cache["images"],
+                key=lambda img: (img.position, img.id),
+            )
+            primary = images[0] if images else None
+        else:
+            primary = self.images.order_by("position", "id").first()
+
+        self._primary_image_cache = primary
+        return self._primary_image_cache
+
+    @property
+    def primary_image_file(self):
+        primary = self.primary_image
+        return primary.image if primary else None
+
+    class Meta:
+        verbose_name = _("Common product")
+        verbose_name_plural = _("Common products")
+
+
+class CommonProductImage(BaseModel):
+    common_product = models.ForeignKey(
+        CommonProduct,
+        on_delete=models.CASCADE,
+        related_name="images",
+        verbose_name=_("Common product"),
+    )
+    image = models.ImageField(
+        upload_to="common_product_images/",
+        verbose_name=_("Image"),
+        validators=[validate_image_size, validate_image_dimensions],
+    )
+    position = models.PositiveIntegerField(default=0, verbose_name=_("Position"))
+
+    class Meta:
+        verbose_name = _("Common product image")
+        verbose_name_plural = _("Common product images")
+        ordering = ("position", "id")
+
+    def __str__(self):
+        return f"{self.common_product_id}-{self.position}"
+
+
+class Product(BaseModel):
+    common_product = models.ForeignKey(
+        CommonProduct,
+        on_delete=models.PROTECT,
+        related_name="market_products",
+        verbose_name=_("Common product"),
+        blank=True,
+        null=True,
+    )
+    name = models.CharField(max_length=128, verbose_name=_("Name"), blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Price"))
+    description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
     market = models.ForeignKey(
         Market,
         on_delete=models.PROTECT,
@@ -102,16 +173,44 @@ class Product(BaseModel):
         on_delete=models.PROTECT,
         related_name="products",
         verbose_name=_("Category"),
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
-        return self.name
+        return self.resolved_name or "-"
+
+    def clean(self):
+        super().clean()
+        if not self.common_product:
+            errors = {}
+            if not self.name:
+                errors["name"] = _("Name is required when common product is not selected.")
+            if not self.description:
+                errors["description"] = _("Description is required when common product is not selected.")
+            if not self.category_id:
+                errors["category"] = _("Category is required when common product is not selected.")
+            if errors:
+                raise ValidationError(errors)
+
+    @property
+    def resolved_name(self):
+        return self.name or (self.common_product.name if self.common_product else None)
+
+    @property
+    def resolved_description(self):
+        return self.description or (self.common_product.description if self.common_product else None)
+
+    @property
+    def resolved_category(self):
+        return self.category or (self.common_product.category if self.common_product else None)
 
     @property
     def primary_image(self):
         if hasattr(self, "_primary_image_cache"):
             return self._primary_image_cache
 
+        primary = None
         if hasattr(self, "_prefetched_objects_cache") and "images" in self._prefetched_objects_cache:
             images = sorted(
                 self._prefetched_objects_cache["images"],
@@ -120,6 +219,9 @@ class Product(BaseModel):
             primary = images[0] if images else None
         else:
             primary = self.images.order_by("position", "id").first()
+
+        if not primary and self.common_product:
+            primary = self.common_product.primary_image
 
         self._primary_image_cache = primary
         return self._primary_image_cache

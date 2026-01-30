@@ -46,6 +46,20 @@ class BulkProductItemSerializer(serializers.ModelSerializer):
             "category",
         )
 
+    def validate(self, attrs):
+        missing = []
+        if not attrs.get("name"):
+            missing.append("name")
+        if not attrs.get("description"):
+            missing.append("description")
+        if not attrs.get("category"):
+            missing.append("category")
+        if missing:
+            raise serializers.ValidationError(
+                {"detail": "Missing required fields: " + ", ".join(missing)}
+            )
+        return attrs
+
 
 class BulkProductCreatePayloadSerializer(serializers.Serializer):
     items = BulkProductItemSerializer(many=True, allow_empty=False)

@@ -12,10 +12,24 @@ from apps.product.serializers import ProductSerializer
 
 
 class ProductView(ListAPIView):
-    queryset = Product.objects.select_related("market", "category").prefetch_related("images")
+    queryset = Product.objects.select_related(
+        "market",
+        "category",
+        "common_product",
+        "common_product__category",
+    ).prefetch_related("images", "common_product__images")
     serializer_class = ProductSerializer
     filter_backends = [SearchFilter, OrderingFilter]
-    search_fields = ['name', 'name_ru', 'name_uz', 'name_en']
+    search_fields = [
+        "name",
+        "name_ru",
+        "name_uz",
+        "name_en",
+        "common_product__name",
+        "common_product__name_ru",
+        "common_product__name_uz",
+        "common_product__name_en",
+    ]
     permission_classes = [permissions.IsAuthenticated]
     ordering_fields = ['price']
 
@@ -40,7 +54,9 @@ class ProductView(ListAPIView):
 
         category_id = self.request.query_params.get("category_id")
         if category_id:
-            qs = qs.filter(category_id=category_id)
+            qs = qs.filter(
+                Q(category_id=category_id) | Q(common_product__category_id=category_id)
+            )
         
         is_discount = self.request.query_params.get("is_discount")
         if is_discount and (is_discount == "True" or is_discount == "true"):
@@ -71,7 +87,12 @@ class ProductView(ListAPIView):
 class ProductDetailView(RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ProductSerializer
-    queryset = Product.objects.select_related("market", "category").prefetch_related("images")
+    queryset = Product.objects.select_related(
+        "market",
+        "category",
+        "common_product",
+        "common_product__category",
+    ).prefetch_related("images", "common_product__images")
     lookup_field = 'pk'
 
 
