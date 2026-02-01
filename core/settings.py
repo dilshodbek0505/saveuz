@@ -12,12 +12,16 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import environ
+import os
 
 import firebase_admin
 from firebase_admin import credentials
 
-cred = credentials.Certificate("firebase_config.json")
-firebase_admin.initialize_app(cred)
+# Initialize Firebase only if config file exists
+firebase_config_path = Path(__file__).resolve().parent.parent / "firebase_config.json"
+if firebase_config_path.exists():
+    cred = credentials.Certificate(str(firebase_config_path))
+    firebase_admin.initialize_app(cred)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
