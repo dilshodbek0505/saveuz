@@ -63,6 +63,11 @@
     display: none;
 }
 
+.common-product-section.is-hidden,
+.manual-fields-section.is-hidden {
+    display: none !important;
+}
+
 .common-product-select {
     width: 100%;
     max-width: 500px;

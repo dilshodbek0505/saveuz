@@ -1,120 +1,112 @@
-(function($) {
+(() => {
     'use strict';
 
-    if (!$ || !$.fn) {
-        return;
+    function qs(selector, root = document) {
+        return root.querySelector(selector);
     }
 
-    $(document).ready(function() {
-        function updateAddModeTabs() {
-            const $tabs = $('.add-mode-tabs');
-            if (!$tabs.length) return;
-            const currentValue = $('input[name="add_mode"]:checked').val();
-            $tabs.find('.add-mode-tab').each(function() {
-                const $btn = $(this);
-                const value = $btn.data('value');
-                const active = value === currentValue;
-                $btn.toggleClass('is-active', active).attr('aria-selected', active ? 'true' : 'false');
-            });
-        }
+    function qsa(selector, root = document) {
+        return Array.from(root.querySelectorAll(selector));
+    }
 
-        function initAddModeTabs() {
-            const $field = $('#id_add_mode');
-            if (!$field.length || $('.add-mode-tabs').length) return;
+    function updateAddModeTabs() {
+        const tabs = qs('.add-mode-tabs');
+        if (!tabs) return;
+        const checked = qs('input[name="add_mode"]:checked');
+        const value = checked ? checked.value : 'manual';
+        qsa('.add-mode-tab', tabs).forEach((btn) => {
+            const active = btn.dataset.value === value;
+            btn.classList.toggle('is-active', active);
+            btn.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+    }
 
-            const $inputs = $field.find('input[type="radio"][name="add_mode"]');
-            if (!$inputs.length) return;
+    function initAddModeTabs() {
+        const field = qs('#id_add_mode');
+        if (!field || qs('.add-mode-tabs')) return;
+        const inputs = qsa('input[type="radio"][name="add_mode"]', field);
+        if (!inputs.length) return;
 
-            const $tabs = $('<div class="add-mode-tabs" role="tablist" aria-label="Способ добавления"></div>');
-            $inputs.each(function() {
-                const $input = $(this);
-                const value = $input.val();
-                const labelText = $input.parent().text().trim();
-                const $btn = $('<button type="button" class="add-mode-tab" role="tab"></button>');
-                $btn.text(labelText);
-                $btn.attr('data-value', value);
-                $tabs.append($btn);
-            });
+        const tabs = document.createElement('div');
+        tabs.className = 'add-mode-tabs';
+        tabs.setAttribute('role', 'tablist');
+        tabs.setAttribute('aria-label', 'Способ добавления');
 
-            $field.addClass('add-mode-hidden').after($tabs);
-
-            $tabs.on('click', '.add-mode-tab', function() {
-                const value = $(this).data('value');
-                $inputs.filter('[value="' + value + '"]').prop('checked', true).trigger('change');
+        inputs.forEach((input) => {
+            const label = input.closest('label');
+            const labelText = label ? label.textContent.trim() : input.value;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'add-mode-tab';
+            btn.setAttribute('role', 'tab');
+            btn.dataset.value = input.value;
+            btn.textContent = labelText;
+            btn.addEventListener('click', () => {
+                input.checked = true;
+                input.dispatchEvent(new Event('change', { bubbles: true }));
                 updateAddModeTabs();
             });
-        }
-
-        // Функция для переключения режимов
-        function toggleAddMode() {
-            const addMode = $('input[name="add_mode"]:checked').val();
-            const commonProductSection = $('.common-product-section');
-            const manualFieldsSection = $('.manual-fields-section');
-            
-            if (addMode === 'common') {
-                // Показываем секцию общей базы, скрываем ручные поля
-                commonProductSection.removeClass('hidden');
-                manualFieldsSection.addClass('hidden');
-                
-                // Делаем поля ручного ввода необязательными и readonly
-                $('#id_name').prop('required', false).prop('readonly', true);
-                $('#id_description').prop('required', false).prop('readonly', true);
-                $('#id_category').prop('required', false).prop('readonly', true);
-                
-                // Делаем common_product обязательным
-                $('#id_common_product').prop('required', true);
-                
-            } else if (addMode === 'manual') {
-                // Скрываем секцию общей базы, показываем ручные поля
-                commonProductSection.addClass('hidden');
-                manualFieldsSection.removeClass('hidden');
-                
-                // Делаем поля ручного ввода обязательными и редактируемыми
-                $('#id_name').prop('required', true).prop('readonly', false);
-                $('#id_description').prop('required', true).prop('readonly', false);
-                $('#id_category').prop('required', true).prop('readonly', false);
-                
-                // Делаем common_product необязательным
-                $('#id_common_product').prop('required', false);
-            }
-
-            updateAddModeTabs();
-        }
-
-        // Обработчик изменения режима
-        $('input[name="add_mode"]').on('change', function() {
-            toggleAddMode();
+            tabs.appendChild(btn);
         });
 
-        // Инициализация при загрузке страницы
-        initAddModeTabs();
-        toggleAddMode();
+        field.classList.add('add-mode-hidden');
+        field.insertAdjacentElement('afterend', tabs);
+    }
 
-        // Обновление информации о продукте при выборе common_product
-        $('#id_common_product').on('change', function() {
-            const productId = $(this).val();
-            if (productId) {
-                // Автоматически переключаемся на режим "из общей базы"
-                $('input[name="add_mode"][value="common"]').prop('checked', true);
-                toggleAddMode();
-                
-                // Заполняем поля данными из выбранного продукта (для визуального отображения)
-                // Данные будут взяты из common_product автоматически при сохранении
-                const selectedOption = $(this).find('option:selected');
-                const productText = selectedOption.text();
-                
-                // Можно добавить AJAX запрос для получения полной информации о продукте
-                // и заполнения информационного блока
-            } else {
-                // Если продукт не выбран, переключаемся на ручной режим
-                if (!$('#id_name').val() && !$('#id_description').val()) {
-                    $('input[name="add_mode"][value="manual"]').prop('checked', true);
-                    toggleAddMode();
-                }
-            }
-        });
+    function setFieldState(el, required, readonly) {
+        if (!el) return;
+        el.required = !!required;
+        if (readonly !== undefined) {
+            el.readOnly = !!readonly;
+        }
+    }
+
+    function toggleAddMode() {
+        const checked = qs('input[name="add_mode"]:checked');
+        const mode = checked ? checked.value : 'manual';
+
+        const commonSection = qs('.common-product-section');
+        const manualSection = qs('.manual-fields-section');
+
+        if (commonSection) {
+            commonSection.classList.toggle('is-hidden', mode !== 'common');
+            commonSection.classList.toggle('hidden', mode !== 'common');
+        }
+        if (manualSection) {
+            manualSection.classList.toggle('is-hidden', mode !== 'manual');
+            manualSection.classList.toggle('hidden', mode !== 'manual');
+        }
+
+        setFieldState(qs('#id_name'), mode === 'manual', mode !== 'manual');
+        setFieldState(qs('#id_description'), mode === 'manual', mode !== 'manual');
+        setFieldState(qs('#id_category'), mode === 'manual', mode !== 'manual');
+        setFieldState(qs('#id_common_product'), mode === 'common', false);
 
         updateAddModeTabs();
-    });
+    }
 
-})(django.jQuery);
+    function initHandlers() {
+        qsa('input[name="add_mode"]').forEach((input) => {
+            input.addEventListener('change', toggleAddMode);
+        });
+
+        const commonSelect = qs('#id_common_product');
+        if (commonSelect) {
+            commonSelect.addEventListener('change', () => {
+                if (commonSelect.value) {
+                    const commonInput = qs('input[name="add_mode"][value="common"]');
+                    if (commonInput) {
+                        commonInput.checked = true;
+                        commonInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initAddModeTabs();
+        initHandlers();
+        toggleAddMode();
+    });
+})();
