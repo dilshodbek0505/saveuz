@@ -1,7 +1,7 @@
 /* Стили для формы добавления продуктов */
 
 :root {
-    --saveuz-card-bg: var(--card-bg, #f9fafb);
+    --saveuz-card-bg: var(--body-bg, #ffffff);
     --saveuz-border: var(--border-color, #e5e7eb);
     --saveuz-text: var(--body-fg, #111827);
     --saveuz-primary: var(--primary, #2563eb);
@@ -36,7 +36,7 @@
     padding: 10px 16px;
     border: 1px solid var(--saveuz-border);
     border-radius: 10px;
-    background: var(--body-bg, #ffffff);
+    background: var(--saveuz-card-bg);
     color: var(--saveuz-text);
     display: inline-block;
     transition: all 0.2s;
@@ -124,11 +124,15 @@ html[data-theme="dark"] .common-product-section:not(.hidden),
 html[data-theme="dark"] .manual-fields-section:not(.hidden),
 body[data-theme="dark"] .common-product-section:not(.hidden),
 body[data-theme="dark"] .manual-fields-section:not(.hidden),
+.dark-mode .common-product-section:not(.hidden),
+.dark-mode .manual-fields-section:not(.hidden),
+html.dark .common-product-section:not(.hidden),
+html.dark .manual-fields-section:not(.hidden),
 .theme-dark .common-product-section:not(.hidden),
 .theme-dark .manual-fields-section:not(.hidden),
 body.dark .common-product-section:not(.hidden),
 body.dark .manual-fields-section:not(.hidden) {
-    background: #111827;
+    background: #0f172a;
     border-color: #1f2937;
     color: #e5e7eb;
 }
@@ -136,9 +140,11 @@ body.dark .manual-fields-section:not(.hidden) {
 [data-theme="dark"] .common-product-info,
 html[data-theme="dark"] .common-product-info,
 body[data-theme="dark"] .common-product-info,
+.dark-mode .common-product-info,
+html.dark .common-product-info,
 .theme-dark .common-product-info,
 body.dark .common-product-info {
-    background: #111827;
+    background: #0f172a;
     border-color: #1f2937;
     color: #e5e7eb;
 }

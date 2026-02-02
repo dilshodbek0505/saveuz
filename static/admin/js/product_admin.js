@@ -104,42 +104,6 @@
             }
         });
 
-        // Улучшение UX: предупреждение при переключении режима с заполненными данными
-        let previousMode = $('input[name="add_mode"]:checked').val();
-        $('input[name="add_mode"]').on('change', function() {
-            const newMode = $(this).val();
-            const hasManualData = $('#id_name').val() || $('#id_description').val() || $('#id_category').val();
-            const hasCommonProduct = $('#id_common_product').val();
-            
-            // Если режим не изменился, ничего не делаем
-            if (newMode === previousMode) {
-                return;
-            }
-            
-            if (newMode === 'common' && hasManualData && !hasCommonProduct) {
-                if (!confirm('Вы переключаетесь на режим "Из общей базы". ' +
-                           'Заполненные вручную данные (название, описание, категория) будут скрыты. ' +
-                           'Продолжить?')) {
-                    // Возвращаемся к предыдущему режиму
-                    $('input[name="add_mode"][value="' + previousMode + '"]').prop('checked', true);
-                    return false;
-                }
-            } else if (newMode === 'manual' && hasCommonProduct) {
-                if (!confirm('Вы переключаетесь на режим "Вручную". ' +
-                           'Выбранный продукт из общей базы будет сброшен. ' +
-                           'Продолжить?')) {
-                    // Возвращаемся к предыдущему режиму
-                    $('input[name="add_mode"][value="' + previousMode + '"]').prop('checked', true);
-                    return false;
-                }
-                // Очищаем common_product при переключении на ручной режим
-                $('#id_common_product').val('');
-            }
-            
-            previousMode = newMode;
-            toggleAddMode();
-        });
-
         updateAddModeTabs();
     });
 
