@@ -9,41 +9,34 @@
     --saveuz-warning: var(--warning, #f59e0b);
 }
 
-.add-mode-selector {
-    list-style: none;
-    padding: 0;
-    margin: 8px 0 16px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.add-mode-selector li {
-    margin: 0;
-}
-
-.add-mode-selector input[type="radio"] {
+.add-mode-hidden {
     position: absolute;
     opacity: 0;
-    width: 1px;
-    height: 1px;
-    margin: 0;
+    pointer-events: none;
+    height: 0;
+    overflow: hidden;
 }
 
-.add-mode-selector label {
-    font-weight: 500;
+.add-mode-tabs {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 8px 0 16px;
+}
+
+.add-mode-tab {
+    font-weight: 600;
     cursor: pointer;
     padding: 10px 16px;
     border: 1px solid var(--saveuz-border);
     border-radius: 10px;
     background: var(--saveuz-card-bg);
     color: var(--saveuz-text);
-    display: inline-block;
     transition: all 0.2s;
+    line-height: 1.2;
 }
 
-.add-mode-selector li.is-active label,
-.add-mode-selector label.is-active {
+.add-mode-tab.is-active {
     background: var(--saveuz-primary);
     color: #ffffff;
     border-color: var(--saveuz-primary);

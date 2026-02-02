@@ -7,18 +7,41 @@
 
     $(document).ready(function() {
         function updateAddModeTabs() {
-            const list = $('.add-mode-selector');
-            list.attr('role', 'tablist');
-            list.find('li').removeClass('is-active');
-            list.find('label').removeClass('is-active').attr('role', 'tab');
-            list.find('input:checked').each(function() {
-                const $li = $(this).closest('li');
-                const $label = $(this).closest('label');
-                $li.addClass('is-active');
-                $label.addClass('is-active').attr('aria-selected', 'true');
+            const $tabs = $('.add-mode-tabs');
+            if (!$tabs.length) return;
+            const currentValue = $('input[name="add_mode"]:checked').val();
+            $tabs.find('.add-mode-tab').each(function() {
+                const $btn = $(this);
+                const value = $btn.data('value');
+                const active = value === currentValue;
+                $btn.toggleClass('is-active', active).attr('aria-selected', active ? 'true' : 'false');
             });
-            list.find('input:not(:checked)').each(function() {
-                $(this).closest('label').attr('aria-selected', 'false');
+        }
+
+        function initAddModeTabs() {
+            const $field = $('#id_add_mode');
+            if (!$field.length || $('.add-mode-tabs').length) return;
+
+            const $inputs = $field.find('input[type="radio"][name="add_mode"]');
+            if (!$inputs.length) return;
+
+            const $tabs = $('<div class="add-mode-tabs" role="tablist" aria-label="Способ добавления"></div>');
+            $inputs.each(function() {
+                const $input = $(this);
+                const value = $input.val();
+                const labelText = $input.parent().text().trim();
+                const $btn = $('<button type="button" class="add-mode-tab" role="tab"></button>');
+                $btn.text(labelText);
+                $btn.attr('data-value', value);
+                $tabs.append($btn);
+            });
+
+            $field.addClass('add-mode-hidden').after($tabs);
+
+            $tabs.on('click', '.add-mode-tab', function() {
+                const value = $(this).data('value');
+                $inputs.filter('[value="' + value + '"]').prop('checked', true).trigger('change');
+                updateAddModeTabs();
             });
         }
 
@@ -63,21 +86,8 @@
             toggleAddMode();
         });
 
-        // Клик по табу (li/label) должен переключать input
-        $('.add-mode-selector').on('click', 'li, label', function(event) {
-            const $li = $(this).closest('li');
-            let $input = $li.find('input[type="radio"]').first();
-            if (!$input.length) {
-                const labelFor = $(this).attr('for');
-                $input = labelFor ? $('#' + labelFor) : $input;
-            }
-            if ($input && $input.length) {
-                $input.prop('checked', true).trigger('change');
-                event.preventDefault();
-            }
-        });
-
         // Инициализация при загрузке страницы
+        initAddModeTabs();
         toggleAddMode();
 
         // Обновление информации о продукте при выборе common_product
