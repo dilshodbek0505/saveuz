@@ -19,18 +19,22 @@
 
 .add-mode-tabs {
     display: inline-flex;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
     margin: 8px 0 16px;
+    padding: 6px;
+    background: var(--saveuz-card-bg);
+    border: 1px solid var(--saveuz-border);
+    border-radius: 12px;
 }
 
 .add-mode-tab {
     font-weight: 600;
     cursor: pointer;
     padding: 10px 16px;
-    border: 1px solid var(--saveuz-border);
+    border: 1px solid transparent;
     border-radius: 10px;
-    background: var(--saveuz-card-bg);
+    background: transparent;
     color: var(--saveuz-text);
     transition: all 0.2s;
     line-height: 1.2;
@@ -74,12 +78,62 @@
     border-radius: 10px;
     padding: 10px 12px;
     box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 #id_common_product:focus {
     outline: none;
     border-color: var(--saveuz-primary);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Select2 (Django admin) support */
+.select2-container--default .select2-selection--single {
+    background: var(--saveuz-card-bg) !important;
+    color: var(--saveuz-text) !important;
+    border: 1px solid var(--saveuz-border) !important;
+    border-radius: 10px !important;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--saveuz-text) !important;
+    line-height: 38px;
+    padding-left: 12px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px;
+}
+
+.select2-container--default .select2-dropdown {
+    background: var(--saveuz-card-bg) !important;
+    color: var(--saveuz-text) !important;
+    border: 1px solid var(--saveuz-border) !important;
+}
+
+.select2-container--default .select2-results__option {
+    color: var(--saveuz-text) !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background: var(--saveuz-primary) !important;
+    color: #ffffff !important;
+}
+
+/* Force dark theme overrides if base admin overrides */
+[data-theme="dark"] #id_common_product,
+html[data-theme="dark"] #id_common_product,
+body[data-theme="dark"] #id_common_product,
+.theme-dark #id_common_product,
+body.dark #id_common_product,
+.dark-mode #id_common_product {
+    background: #0f172a !important;
+    color: #e5e7eb !important;
+    border-color: #1f2937 !important;
 }
 
 /* Стилизация информационного блока */
