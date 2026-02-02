@@ -80,13 +80,13 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             # При создании нового продукта obj может быть None
             # Информация будет обновляться через JavaScript
             return format_html(
-                '<div id="common-product-info" style="padding: 10px; background: #fff3cd; border-radius: 4px; color: #856404;">'
+                '<div id="common-product-info" class="common-product-info is-empty">'
                 'Выберите продукт из общей базы, чтобы увидеть информацию'
                 '</div>'
             )
-        
+
         return format_html(
-            '<div id="common-product-info" style="padding: 10px; background: #e7f3ff; border-radius: 4px;">'
+            '<div id="common-product-info" class="common-product-info is-filled">'
             '<strong>Название:</strong> {}<br>'
             '<strong>Описание:</strong> {}<br>'
             '<strong>Категория:</strong> {}'

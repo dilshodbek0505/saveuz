@@ -3,31 +3,40 @@
 .add-mode-selector {
     list-style: none;
     padding: 0;
-    margin: 15px 0;
+    margin: 8px 0 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .add-mode-selector li {
-    margin-bottom: 10px;
+    margin: 0;
 }
 
 .add-mode-selector input[type="radio"] {
-    margin-right: 8px;
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .add-mode-selector label {
     font-weight: 500;
     cursor: pointer;
-    padding: 8px 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 4px;
+    padding: 10px 16px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 10px;
+    background: var(--body-bg, #ffffff);
+    color: var(--body-fg, #111827);
     display: inline-block;
     transition: all 0.2s;
 }
 
-.add-mode-selector input[type="radio"]:checked + label {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
+.add-mode-selector li.is-active label,
+.add-mode-selector label.is-active {
+    background: var(--primary, #2563eb);
+    color: #ffffff;
+    border-color: var(--primary, #2563eb);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .common-product-section {
@@ -61,17 +70,38 @@
     border-radius: 4px;
 }
 
-/* Подсветка активных секций */
+/* Подсветка активных секций (тема-зависимая) */
 .common-product-section:not(.hidden) {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 4px;
-    border-left: 4px solid #28a745;
+    background: var(--card-bg, #f9fafb);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-left: 4px solid var(--success, #16a34a);
 }
 
 .manual-fields-section:not(.hidden) {
-    background-color: #fff3cd;
-    padding: 15px;
-    border-radius: 4px;
-    border-left: 4px solid #ffc107;
+    background: var(--card-bg, #f9fafb);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-left: 4px solid var(--warning, #f59e0b);
+}
+
+/* Информационный блок общей базы */
+.common-product-info {
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    background: var(--card-bg, #f9fafb);
+    color: var(--body-fg, #111827);
+}
+
+.common-product-info.is-empty {
+    border-color: var(--warning, #f59e0b);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.common-product-info.is-filled {
+    border-color: var(--success, #16a34a);
+    background: rgba(22, 163, 74, 0.08);
 }

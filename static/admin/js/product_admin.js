@@ -2,6 +2,22 @@
     'use strict';
 
     $(document).ready(function() {
+        function updateAddModeTabs() {
+            const list = $('.add-mode-selector');
+            list.attr('role', 'tablist');
+            list.find('li').removeClass('is-active');
+            list.find('label').removeClass('is-active').attr('role', 'tab');
+            list.find('input:checked').each(function() {
+                const $li = $(this).closest('li');
+                const $label = $(this).closest('label');
+                $li.addClass('is-active');
+                $label.addClass('is-active').attr('aria-selected', 'true');
+            });
+            list.find('input:not(:checked)').each(function() {
+                $(this).closest('label').attr('aria-selected', 'false');
+            });
+        }
+
         // Функция для переключения режимов
         function toggleAddMode() {
             const addMode = $('input[name="add_mode"]:checked').val();
@@ -34,6 +50,8 @@
                 // Делаем common_product необязательным
                 $('#id_common_product').prop('required', false);
             }
+
+            updateAddModeTabs();
         }
 
         // Обработчик изменения режима
@@ -103,6 +121,8 @@
             previousMode = newMode;
             toggleAddMode();
         });
+
+        updateAddModeTabs();
     });
 
 })(django.jQuery);
