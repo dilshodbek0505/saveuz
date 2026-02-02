@@ -237,3 +237,9 @@ ESKIZ_SMS_PASSWORD = env.str("ESKIZ_SMS_PASSWORD")
 
 # django cors headers 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# File upload settings
+# Увеличиваем лимиты для загрузки изображений (до 10MB на файл)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000  # Увеличиваем лимит полей формы
