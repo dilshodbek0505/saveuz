@@ -1,5 +1,14 @@
 /* Стили для формы добавления продуктов */
 
+:root {
+    --saveuz-card-bg: var(--card-bg, #f9fafb);
+    --saveuz-border: var(--border-color, #e5e7eb);
+    --saveuz-text: var(--body-fg, #111827);
+    --saveuz-primary: var(--primary, #2563eb);
+    --saveuz-success: var(--success, #16a34a);
+    --saveuz-warning: var(--warning, #f59e0b);
+}
+
 .add-mode-selector {
     list-style: none;
     padding: 0;
@@ -23,19 +32,19 @@
     font-weight: 500;
     cursor: pointer;
     padding: 10px 16px;
-    border: 1px solid var(--border-color, #e5e7eb);
+    border: 1px solid var(--saveuz-border);
     border-radius: 10px;
     background: var(--body-bg, #ffffff);
-    color: var(--body-fg, #111827);
+    color: var(--saveuz-text);
     display: inline-block;
     transition: all 0.2s;
 }
 
 .add-mode-selector li.is-active label,
 .add-mode-selector label.is-active {
-    background: var(--primary, #2563eb);
+    background: var(--saveuz-primary);
     color: #ffffff;
-    border-color: var(--primary, #2563eb);
+    border-color: var(--saveuz-primary);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
@@ -72,36 +81,68 @@
 
 /* Подсветка активных секций (тема-зависимая) */
 .common-product-section:not(.hidden) {
-    background: var(--card-bg, #f9fafb);
+    background: var(--saveuz-card-bg);
     padding: 16px;
     border-radius: 8px;
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-left: 4px solid var(--success, #16a34a);
+    border: 1px solid var(--saveuz-border);
+    border-left: 4px solid var(--saveuz-success);
 }
 
 .manual-fields-section:not(.hidden) {
-    background: var(--card-bg, #f9fafb);
+    background: var(--saveuz-card-bg);
     padding: 16px;
     border-radius: 8px;
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-left: 4px solid var(--warning, #f59e0b);
+    border: 1px solid var(--saveuz-border);
+    border-left: 4px solid var(--saveuz-warning);
 }
 
 /* Информационный блок общей базы */
 .common-product-info {
     padding: 12px 14px;
     border-radius: 8px;
-    border: 1px solid var(--border-color, #e5e7eb);
-    background: var(--card-bg, #f9fafb);
-    color: var(--body-fg, #111827);
+    border: 1px solid var(--saveuz-border);
+    background: var(--saveuz-card-bg);
+    color: var(--saveuz-text);
 }
 
 .common-product-info.is-empty {
-    border-color: var(--warning, #f59e0b);
+    border-color: var(--saveuz-warning);
     background: rgba(245, 158, 11, 0.08);
 }
 
 .common-product-info.is-filled {
-    border-color: var(--success, #16a34a);
+    border-color: var(--saveuz-success);
     background: rgba(22, 163, 74, 0.08);
+}
+
+/* Темная тема (на случай, если CSS переменные не меняются) */
+[data-theme="dark"] .common-product-section:not(.hidden),
+[data-theme="dark"] .manual-fields-section:not(.hidden),
+.theme-dark .common-product-section:not(.hidden),
+.theme-dark .manual-fields-section:not(.hidden),
+body.dark .common-product-section:not(.hidden),
+body.dark .manual-fields-section:not(.hidden) {
+    background: #111827;
+    border-color: #1f2937;
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .common-product-info,
+.theme-dark .common-product-info,
+body.dark .common-product-info {
+    background: #111827;
+    border-color: #1f2937;
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .common-product-info.is-empty,
+.theme-dark .common-product-info.is-empty,
+body.dark .common-product-info.is-empty {
+    background: rgba(245, 158, 11, 0.12);
+}
+
+[data-theme="dark"] .common-product-info.is-filled,
+.theme-dark .common-product-info.is-filled,
+body.dark .common-product-info.is-filled {
+    background: rgba(22, 163, 74, 0.12);
 }

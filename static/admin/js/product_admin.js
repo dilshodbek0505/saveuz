@@ -1,6 +1,10 @@
 (function($) {
     'use strict';
 
+    if (!$ || !$.fn) {
+        return;
+    }
+
     $(document).ready(function() {
         function updateAddModeTabs() {
             const list = $('.add-mode-selector');
@@ -57,6 +61,16 @@
         // Обработчик изменения режима
         $('input[name="add_mode"]').on('change', function() {
             toggleAddMode();
+        });
+
+        // Клик по табу (label) должен переключать input
+        $('.add-mode-selector').on('click', 'label', function(event) {
+            const labelFor = $(this).attr('for');
+            let $input = labelFor ? $('#' + labelFor) : $(this).find('input[type="radio"]').first();
+            if ($input && $input.length) {
+                $input.prop('checked', true).trigger('change');
+                event.preventDefault();
+            }
         });
 
         // Инициализация при загрузке страницы
