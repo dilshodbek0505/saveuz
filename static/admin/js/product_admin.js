@@ -61,6 +61,57 @@
         }
     }
 
+    function setFieldsState(ids, required, readonly) {
+        ids.forEach((id) => {
+            setFieldState(qs('#' + id), required, readonly);
+        });
+    }
+
+    function updateCommonProductInfo(productId) {
+        const info = qs('#common-product-info');
+        if (!info) return;
+        const baseUrl = info.getAttribute('data-url');
+        if (!baseUrl || !productId) {
+            info.classList.remove('is-filled');
+            info.classList.add('is-empty');
+            info.innerHTML = '' +
+                '<div class="common-product-info__layout">' +
+                '<div class="common-product-info__image is-empty">Фото</div>' +
+                '<div class="common-product-info__content">' +
+                '<div class="common-product-info__title">Выберите продукт из общей базы</div>' +
+                '<div class="common-product-info__text">Чтобы увидеть информацию и фото</div>' +
+                '</div>' +
+                '</div>';
+            return;
+        }
+
+        fetch(baseUrl + '?id=' + encodeURIComponent(productId), { credentials: 'same-origin' })
+            .then((response) => response.ok ? response.json() : Promise.reject(response))
+            .then((data) => {
+                info.classList.remove('is-empty');
+                info.classList.add('is-filled');
+                const imageStyle = data.image_url
+                    ? 'style="background-image:url(' + data.image_url + ');"'
+                    : '';
+                const name = data.name || '';
+                const desc = (data.description || '').slice(0, 180);
+                const category = data.category || '-';
+                info.innerHTML = '' +
+                    '<div class="common-product-info__layout">' +
+                    '<div class="common-product-info__image" ' + imageStyle + '></div>' +
+                    '<div class="common-product-info__content">' +
+                    '<div class="common-product-info__title">' + name + '</div>' +
+                    '<div class="common-product-info__text">' + desc + '</div>' +
+                    '<div class="common-product-info__meta">Категория: ' + category + '</div>' +
+                    '</div>' +
+                    '</div>';
+            })
+            .catch(() => {
+                info.classList.remove('is-filled');
+                info.classList.add('is-empty');
+            });
+    }
+
     function toggleAddMode() {
         const checked = qs('input[name="add_mode"]:checked');
         const mode = checked ? checked.value : 'manual';
@@ -77,9 +128,21 @@
             manualSection.classList.toggle('hidden', mode !== 'manual');
         }
 
-        setFieldState(qs('#id_name'), mode === 'manual', mode !== 'manual');
-        setFieldState(qs('#id_description'), mode === 'manual', mode !== 'manual');
-        setFieldState(qs('#id_category'), mode === 'manual', mode !== 'manual');
+        setFieldsState(
+            [
+                'id_name',
+                'id_name_ru',
+                'id_name_uz',
+                'id_name_en',
+                'id_description',
+                'id_description_ru',
+                'id_description_uz',
+                'id_description_en',
+                'id_category',
+            ],
+            mode === 'manual',
+            mode !== 'manual'
+        );
         setFieldState(qs('#id_common_product'), mode === 'common', false);
 
         updateAddModeTabs();
@@ -100,6 +163,7 @@
                         commonInput.dispatchEvent(new Event('change', { bubbles: true }));
                     }
                 }
+                updateCommonProductInfo(commonSelect.value);
             });
         }
     }
@@ -108,5 +172,9 @@
         initAddModeTabs();
         initHandlers();
         toggleAddMode();
+        const initialCommon = qs('#id_common_product');
+        if (initialCommon && initialCommon.value) {
+            updateCommonProductInfo(initialCommon.value);
+        }
     });
 })();

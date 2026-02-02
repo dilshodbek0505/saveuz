@@ -72,21 +72,32 @@ class ProductAdminForm(forms.ModelForm):
                 })
             # Очищаем поля, которые будут взяты из common_product
             cleaned_data['name'] = None
+            cleaned_data['name_ru'] = None
+            cleaned_data['name_uz'] = None
+            cleaned_data['name_en'] = None
             cleaned_data['description'] = None
+            cleaned_data['description_ru'] = None
+            cleaned_data['description_uz'] = None
+            cleaned_data['description_en'] = None
             cleaned_data['category'] = common_product.category if common_product else None
         elif add_mode == 'manual':
-            if not cleaned_data.get('name'):
-                raise forms.ValidationError({
-                    'name': _('Название обязательно при ручном добавлении.')
-                })
-            if not cleaned_data.get('description'):
-                raise forms.ValidationError({
-                    'description': _('Описание обязательно при ручном добавлении.')
-                })
-            if not cleaned_data.get('category'):
-                raise forms.ValidationError({
-                    'category': _('Категория обязательна при ручном добавлении.')
-                })
+            required_fields = {
+                'name': _('Название обязательно при ручном добавлении.'),
+                'name_ru': _('Название (RU) обязательно при ручном добавлении.'),
+                'name_uz': _('Название (UZ) обязательно при ручном добавлении.'),
+                'name_en': _('Название (EN) обязательно при ручном добавлении.'),
+                'description': _('Описание обязательно при ручном добавлении.'),
+                'description_ru': _('Описание (RU) обязательно при ручном добавлении.'),
+                'description_uz': _('Описание (UZ) обязательно при ручном добавлении.'),
+                'description_en': _('Описание (EN) обязательно при ручном добавлении.'),
+                'category': _('Категория обязательна при ручном добавлении.'),
+            }
+            errors = {}
+            for field, message in required_fields.items():
+                if not cleaned_data.get(field):
+                    errors[field] = message
+            if errors:
+                raise forms.ValidationError(errors)
             cleaned_data['common_product'] = None
         
         return cleaned_data
@@ -97,7 +108,13 @@ class ProductAdminForm(forms.ModelForm):
         # Если выбран common_product, очищаем ручные поля
         if instance.common_product:
             instance.name = None
+            instance.name_ru = None
+            instance.name_uz = None
+            instance.name_en = None
             instance.description = None
+            instance.description_ru = None
+            instance.description_uz = None
+            instance.description_en = None
             instance.category = instance.common_product.category
         
         if commit:

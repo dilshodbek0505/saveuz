@@ -1,11 +1,13 @@
 from django.contrib import admin
+from django.http import JsonResponse
+from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
 
 from import_export.admin import ExportMixin 
 from unfold.admin import ModelAdmin
 
-from apps.main.models import Product, ProductImage
+from apps.main.models import Product, ProductImage, CommonProduct
 from apps.main.forms.product_admin import ProductAdminForm
 from apps.product.formats import ImageAwareXLSX
 from apps.product.resources import ProductResource
@@ -40,7 +42,17 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             "description": _("Выберите продукт из общей базы. Название, описание и категория будут взяты автоматически. Вам нужно указать только цену и маркет.")
         }),
         (_("Основная информация (ручное заполнение)"), {
-            "fields": ("name", "description", "category"),
+            "fields": (
+                "name",
+                "name_ru",
+                "name_uz",
+                "name_en",
+                "description",
+                "description_ru",
+                "description_uz",
+                "description_en",
+                "category",
+            ),
             "classes": ("manual-fields-section",),
             "description": _("Заполните эти поля, если добавляете продукт вручную.")
         }),
@@ -68,6 +80,8 @@ class ProductAdmin(ExportMixin, ModelAdmin):
 
     @admin.display(description=_("Информация о продукте"))
     def display_common_product_info(self, obj=None):
+        info_url = reverse("admin:main_product_common_product_info")
+
         # Получаем выбранный common_product из формы
         if obj and obj.common_product:
             common_product = obj.common_product
@@ -75,20 +89,41 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             # При создании нового продукта obj может быть None
             # Информация будет обновляться через JavaScript
             return format_html(
-                '<div id="common-product-info" class="common-product-info is-empty">'
-                'Выберите продукт из общей базы, чтобы увидеть информацию'
+                '<div id="common-product-info" class="common-product-info is-empty" data-url="{}">'
+                '<div class="common-product-info__layout">'
+                '<div class="common-product-info__image is-empty">Фото</div>'
+                '<div class="common-product-info__content">'
+                '<div class="common-product-info__title">Выберите продукт из общей базы</div>'
+                '<div class="common-product-info__text">Чтобы увидеть информацию и фото</div>'
                 '</div>'
+                '</div>'
+                '</div>',
+                info_url
             )
 
+        image_url = None
+        if common_product.primary_image_file:
+            try:
+                image_url = common_product.primary_image_file.url
+            except Exception:
+                image_url = None
+
         return format_html(
-            '<div id="common-product-info" class="common-product-info is-filled">'
-            '<strong>Название:</strong> {}<br>'
-            '<strong>Описание:</strong> {}<br>'
-            '<strong>Категория:</strong> {}'
+            '<div id="common-product-info" class="common-product-info is-filled" data-url="{}">'
+            '<div class="common-product-info__layout">'
+            '<div class="common-product-info__image" style="background-image:url({});"></div>'
+            '<div class="common-product-info__content">'
+            '<div class="common-product-info__title">{} </div>'
+            '<div class="common-product-info__text">{}</div>'
+            '<div class="common-product-info__meta">Категория: {}</div>'
+            '</div>'
+            '</div>'
             '</div>',
+            info_url,
+            image_url or "",
             common_product.name,
-            common_product.description[:100] + ('...' if len(common_product.description) > 100 else ''),
-            common_product.category.name if common_product.category else '-'
+            common_product.description[:120] + ("..." if len(common_product.description) > 120 else ""),
+            common_product.category.name if common_product.category else "-"
         )
     display_common_product_info.short_description = _("Информация о продукте")
 
@@ -111,6 +146,49 @@ class ProductAdmin(ExportMixin, ModelAdmin):
         ):
             kwargs["queryset"] = request.user.markets.all()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom = [
+            path(
+                "common-product-info/",
+                self.admin_site.admin_view(self.common_product_info),
+                name="main_product_common_product_info",
+            )
+        ]
+        return custom + urls
+
+    def common_product_info(self, request):
+        product_id = request.GET.get("id")
+        if not product_id:
+            return JsonResponse({"detail": "Missing id"}, status=400)
+
+        try:
+            common_product = CommonProduct.objects.select_related("category").get(id=product_id)
+        except CommonProduct.DoesNotExist:
+            return JsonResponse({"detail": "Not found"}, status=404)
+
+        image_url = None
+        if common_product.primary_image_file:
+            try:
+                image_url = request.build_absolute_uri(common_product.primary_image_file.url)
+            except Exception:
+                image_url = None
+
+        data = {
+            "id": common_product.id,
+            "name": common_product.name,
+            "name_ru": getattr(common_product, "name_ru", None),
+            "name_uz": getattr(common_product, "name_uz", None),
+            "name_en": getattr(common_product, "name_en", None),
+            "description": common_product.description,
+            "description_ru": getattr(common_product, "description_ru", None),
+            "description_uz": getattr(common_product, "description_uz", None),
+            "description_en": getattr(common_product, "description_en", None),
+            "category": common_product.category.name if common_product.category else None,
+            "image_url": image_url,
+        }
+        return JsonResponse(data)
 
     class Media:
         css = {
