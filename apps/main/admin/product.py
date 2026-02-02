@@ -48,11 +48,6 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             "fields": ("market", "price"),
             "description": _("Выберите свой маркет и укажите цену продукта.")
         }),
-        (_("Скидка (необязательно)"), {
-            "fields": ("discount_price", "discount_type", "discount_value"),
-            "classes": ("collapse",),
-            "description": _("Укажите скидку, если необходимо.")
-        }),
     )
     
     inlines = (ProductImageInline,)
