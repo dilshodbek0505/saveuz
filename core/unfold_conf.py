@@ -77,6 +77,12 @@ UNFOLD = {
                         "permission": lambda request: request.user.is_staff,
                     },
                     {
+                        "title": "Common Products",
+                        "icon": "inventory",
+                        "link": lambda request: "/admin/main/commonproduct/",
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                    {
                         "title": "Products",
                         "icon": "inventory_2",
                         "link": lambda request: "/admin/main/product/",

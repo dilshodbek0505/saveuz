@@ -27,7 +27,10 @@ jobs:
           echo "📦 Install requirements"
           pip install -r requirements.txt
 
-          echo "🧱 Migrations"
+          echo "🧱 Create migrations (if needed)"
+          python manage.py makemigrations --noinput || true
+
+          echo "🧱 Apply migrations"
           python manage.py migrate --noinput
 
           echo "🎨 Collect static"
