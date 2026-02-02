@@ -1,0 +1,77 @@
+/* Стили для формы добавления продуктов */
+
+.add-mode-selector {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.add-mode-selector li {
+    margin-bottom: 10px;
+}
+
+.add-mode-selector input[type="radio"] {
+    margin-right: 8px;
+}
+
+.add-mode-selector label {
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 4px;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.add-mode-selector input[type="radio"]:checked + label {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.common-product-section {
+    transition: opacity 0.3s;
+}
+
+.common-product-section.hidden {
+    display: none;
+}
+
+.manual-fields-section {
+    transition: opacity 0.3s;
+}
+
+.manual-fields-section.hidden {
+    display: none;
+}
+
+.common-product-select {
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Стилизация информационного блока */
+.field-display_common_product_info {
+    margin-top: 10px;
+}
+
+.field-display_common_product_info .readonly {
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Подсветка активных секций */
+.common-product-section:not(.hidden) {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid #28a745;
+}
+
+.manual-fields-section:not(.hidden) {
+    background-color: #fff3cd;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid #ffc107;
+}
