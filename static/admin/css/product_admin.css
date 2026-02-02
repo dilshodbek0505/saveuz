@@ -64,6 +64,24 @@
     max-width: 500px;
 }
 
+/* Приведение селектора к стилю Unfold */
+#id_common_product,
+.common-product-select select,
+.common-product-select {
+    background: var(--saveuz-card-bg);
+    color: var(--saveuz-text);
+    border: 1px solid var(--saveuz-border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    box-shadow: none;
+}
+
+#id_common_product:focus {
+    outline: none;
+    border-color: var(--saveuz-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
 /* Стилизация информационного блока */
 .field-display_common_product_info {
     margin-top: 10px;
