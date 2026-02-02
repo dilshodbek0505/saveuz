@@ -63,10 +63,14 @@
             toggleAddMode();
         });
 
-        // Клик по табу (label) должен переключать input
-        $('.add-mode-selector').on('click', 'label', function(event) {
-            const labelFor = $(this).attr('for');
-            let $input = labelFor ? $('#' + labelFor) : $(this).find('input[type="radio"]').first();
+        // Клик по табу (li/label) должен переключать input
+        $('.add-mode-selector').on('click', 'li, label', function(event) {
+            const $li = $(this).closest('li');
+            let $input = $li.find('input[type="radio"]').first();
+            if (!$input.length) {
+                const labelFor = $(this).attr('for');
+                $input = labelFor ? $('#' + labelFor) : $input;
+            }
             if ($input && $input.length) {
                 $input.prop('checked', true).trigger('change');
                 event.preventDefault();

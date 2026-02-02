@@ -25,7 +25,9 @@
 .add-mode-selector input[type="radio"] {
     position: absolute;
     opacity: 0;
-    pointer-events: none;
+    width: 1px;
+    height: 1px;
+    margin: 0;
 }
 
 .add-mode-selector label {
@@ -118,6 +120,10 @@
 /* Темная тема (на случай, если CSS переменные не меняются) */
 [data-theme="dark"] .common-product-section:not(.hidden),
 [data-theme="dark"] .manual-fields-section:not(.hidden),
+html[data-theme="dark"] .common-product-section:not(.hidden),
+html[data-theme="dark"] .manual-fields-section:not(.hidden),
+body[data-theme="dark"] .common-product-section:not(.hidden),
+body[data-theme="dark"] .manual-fields-section:not(.hidden),
 .theme-dark .common-product-section:not(.hidden),
 .theme-dark .manual-fields-section:not(.hidden),
 body.dark .common-product-section:not(.hidden),
@@ -128,6 +134,8 @@ body.dark .manual-fields-section:not(.hidden) {
 }
 
 [data-theme="dark"] .common-product-info,
+html[data-theme="dark"] .common-product-info,
+body[data-theme="dark"] .common-product-info,
 .theme-dark .common-product-info,
 body.dark .common-product-info {
     background: #111827;
@@ -136,12 +144,16 @@ body.dark .common-product-info {
 }
 
 [data-theme="dark"] .common-product-info.is-empty,
+html[data-theme="dark"] .common-product-info.is-empty,
+body[data-theme="dark"] .common-product-info.is-empty,
 .theme-dark .common-product-info.is-empty,
 body.dark .common-product-info.is-empty {
     background: rgba(245, 158, 11, 0.12);
 }
 
 [data-theme="dark"] .common-product-info.is-filled,
+html[data-theme="dark"] .common-product-info.is-filled,
+body[data-theme="dark"] .common-product-info.is-filled,
 .theme-dark .common-product-info.is-filled,
 body.dark .common-product-info.is-filled {
     background: rgba(22, 163, 74, 0.12);
