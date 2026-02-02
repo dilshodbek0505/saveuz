@@ -37,7 +37,7 @@ class ProductAdmin(ExportMixin, ModelAdmin):
         (_("Продукт из общей базы"), {
             "fields": ("common_product", "display_common_product_info"),
             "classes": ("common-product-section",),
-            "description": _("Выберите продукт из общей базы. Остальные данные будут взяты автоматически.")
+            "description": _("Выберите продукт из общей базы. Название, описание и категория будут взяты автоматически. Вам нужно указать только цену и маркет.")
         }),
         (_("Основная информация (ручное заполнение)"), {
             "fields": ("name", "description", "category"),
@@ -46,10 +46,12 @@ class ProductAdmin(ExportMixin, ModelAdmin):
         }),
         (_("Маркет и цена"), {
             "fields": ("market", "price"),
+            "description": _("Выберите свой маркет и укажите цену продукта.")
         }),
-        (_("Скидка"), {
+        (_("Скидка (необязательно)"), {
             "fields": ("discount_price", "discount_type", "discount_value"),
             "classes": ("collapse",),
+            "description": _("Укажите скидку, если необходимо.")
         }),
     )
     

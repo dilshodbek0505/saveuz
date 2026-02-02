@@ -51,6 +51,14 @@
                 // Автоматически переключаемся на режим "из общей базы"
                 $('input[name="add_mode"][value="common"]').prop('checked', true);
                 toggleAddMode();
+                
+                // Заполняем поля данными из выбранного продукта (для визуального отображения)
+                // Данные будут взяты из common_product автоматически при сохранении
+                const selectedOption = $(this).find('option:selected');
+                const productText = selectedOption.text();
+                
+                // Можно добавить AJAX запрос для получения полной информации о продукте
+                // и заполнения информационного блока
             } else {
                 // Если продукт не выбран, переключаемся на ручной режим
                 if (!$('#id_name').val() && !$('#id_description').val()) {
