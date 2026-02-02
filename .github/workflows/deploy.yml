@@ -36,6 +36,11 @@ jobs:
           echo "🎨 Collect static"
           python manage.py collectstatic --noinput
 
+          echo "🔧 Setup nginx upload limits (if needed)"
+          if [ -f "scripts/setup_nginx_upload_limit.sh" ]; then
+            sudo bash scripts/setup_nginx_upload_limit.sh || echo "⚠️  Nginx setup skipped (may need manual configuration)"
+          fi
+
           echo "🔁 Restart supervisor"
           sudo supervisorctl restart saveuz
 
