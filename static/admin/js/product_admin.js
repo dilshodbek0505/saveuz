@@ -118,6 +118,7 @@
 
         const commonSection = qs('.common-product-section');
         const manualSection = qs('.manual-fields-section');
+        const imagesInline = qs('.product-images-inline');
 
         if (commonSection) {
             commonSection.classList.toggle('is-hidden', mode !== 'common');
@@ -126,6 +127,14 @@
         if (manualSection) {
             manualSection.classList.toggle('is-hidden', mode !== 'manual');
             manualSection.classList.toggle('hidden', mode !== 'manual');
+        }
+        if (imagesInline) {
+            const hideImages = mode === 'common';
+            imagesInline.classList.toggle('is-hidden', hideImages);
+            imagesInline.classList.toggle('hidden', hideImages);
+            qsa('input, select, textarea, button', imagesInline).forEach((el) => {
+                el.disabled = hideImages;
+            });
         }
 
         setFieldsState(

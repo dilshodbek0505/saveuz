@@ -17,6 +17,7 @@ class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
     fields = ("image", "position")
+    classes = ("product-images-inline",)
 
 
 # ExportMixin va ModelAdmin'dan meros olindi

@@ -87,6 +87,10 @@ body.dark .add-mode-tab,
     display: none !important;
 }
 
+.product-images-inline.is-hidden {
+    display: none !important;
+}
+
 .common-product-select {
     width: 100%;
     max-width: 500px;
