@@ -16,7 +16,7 @@ class ProductAdminForm(forms.ModelForm):
         choices=ADD_MODE_CHOICES,
         widget=forms.RadioSelect(attrs={'class': 'add-mode-selector'}),
         label=_('Способ добавления'),
-        required=True,
+        required=False,
         initial='manual',
     )
 
@@ -65,6 +65,11 @@ class ProductAdminForm(forms.ModelForm):
         add_mode = cleaned_data.get('add_mode')
         common_product = cleaned_data.get('common_product')
         
+        # Если add_mode не пришел, определяем по common_product
+        if not add_mode:
+            add_mode = 'common' if common_product else 'manual'
+            cleaned_data['add_mode'] = add_mode
+
         # Если выбран продукт из общей базы, всегда считаем режим common
         if common_product and add_mode != 'common':
             add_mode = 'common'
