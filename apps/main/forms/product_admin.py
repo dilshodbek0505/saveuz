@@ -65,6 +65,11 @@ class ProductAdminForm(forms.ModelForm):
         add_mode = cleaned_data.get('add_mode')
         common_product = cleaned_data.get('common_product')
         
+        # Если выбран продукт из общей базы, всегда считаем режим common
+        if common_product and add_mode != 'common':
+            add_mode = 'common'
+            cleaned_data['add_mode'] = 'common'
+
         if add_mode == 'common':
             if not common_product:
                 raise forms.ValidationError({
