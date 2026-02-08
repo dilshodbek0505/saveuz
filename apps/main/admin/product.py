@@ -148,6 +148,15 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             kwargs["queryset"] = request.user.markets.all()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+    def get_formsets_with_inlines(self, request, obj=None):
+        for inline in self.get_inline_instances(request, obj):
+            if isinstance(inline, ProductImageInline) and request.method == "POST":
+                add_mode = request.POST.get("add_mode")
+                common_product = request.POST.get("common_product")
+                if common_product and add_mode in (None, "", "common"):
+                    continue
+            yield inline.get_formset(request, obj), inline
+
     def get_urls(self):
         urls = super().get_urls()
         custom = [
