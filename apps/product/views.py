@@ -30,7 +30,7 @@ class ProductView(ListAPIView):
         "common_product__name_uz",
         "common_product__name_en",
     ]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     ordering_fields = ['price']
 
     @swagger_auto_schema(
@@ -64,28 +64,32 @@ class ProductView(ListAPIView):
                            discount_price__isnull=False,
                            discount_value__isnull=False)
 
-        qs = qs.annotate(
-            is_favorited=Exists(
-                Favorite.objects.filter(
-                    product=OuterRef('pk'),
-                    user=user,
-                    is_active=True
+        if user.is_authenticated:
+            qs = qs.annotate(
+                is_favorited=Exists(
+                    Favorite.objects.filter(
+                        product=OuterRef('pk'),
+                        user=user,
+                        is_active=True
+                    )
                 )
             )
-        )
+        else:
+            qs = qs.annotate(is_favorited=Count("id") * 0)
 
         is_favorited = self.request.query_params.get("is_favorited")
-        if is_favorited and is_favorited.lower() == "true":
-            qs = qs.filter(is_favorited=True)
-        elif is_favorited and is_favorited.lower() == "false":
-            qs = qs.filter(is_favorited=False)
+        if user.is_authenticated and is_favorited:
+            if is_favorited.lower() == "true":
+                qs = qs.filter(is_favorited=True)
+            elif is_favorited.lower() == "false":
+                qs = qs.filter(is_favorited=False)
         
         qs = qs.order_by('?')
         
         return qs
 
 class ProductDetailView(RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     serializer_class = ProductSerializer
     queryset = Product.objects.select_related(
         "market",
@@ -100,14 +104,17 @@ class ProductDetailView(RetrieveAPIView):
         user = self.request.user
         qs = super().get_queryset()
 
-        qs = qs.annotate(
-            is_favorited=Exists(
-                Favorite.objects.filter(
-                    product=OuterRef('pk'),
-                    user=user,
-                    is_active=True,
+        if user.is_authenticated:
+            qs = qs.annotate(
+                is_favorited=Exists(
+                    Favorite.objects.filter(
+                        product=OuterRef('pk'),
+                        user=user,
+                        is_active=True,
+                    )
                 )
             )
-        )
+        else:
+            qs = qs.annotate(is_favorited=Count("id") * 0)
 
         return qs
