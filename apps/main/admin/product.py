@@ -27,6 +27,7 @@ class ProductAdmin(ExportMixin, ModelAdmin):
     resource_class = ProductResource
     formats = [ImageAwareXLSX] # Export uchun formatlar saqlab qolindi
     form = ProductAdminForm
+    change_list_template = "admin/main/product/change_list.html"
     list_display = ("id", "display_name", "market", "display_source")
     list_display_links = ("id", "display_name")
     search_fields = ("name", "common_product__name", "market__name")
