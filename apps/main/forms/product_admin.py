@@ -32,15 +32,32 @@ class ProductAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+        # Делает ручные поля не обязательными на уровне формы
+        manual_fields = [
+            'name',
+            'name_ru',
+            'name_uz',
+            'name_en',
+            'description',
+            'description_ru',
+            'description_uz',
+            'description_en',
+            'category',
+        ]
+        for field in manual_fields:
+            if field in self.fields:
+                self.fields[field].required = False
+
         # Определяем режим на основе наличия common_product
         if self.instance and self.instance.pk:
             if self.instance.common_product_id:
                 self.fields['add_mode'].initial = 'common'
                 # Делаем поля ручного ввода readonly, если выбран common_product
-                self.fields['name'].widget.attrs['readonly'] = True
-                self.fields['description'].widget.attrs['readonly'] = True
-                self.fields['category'].widget.attrs['readonly'] = True
+                for field in manual_fields:
+                    if field in self.fields and field != 'category':
+                        self.fields[field].widget.attrs['readonly'] = True
+                if 'category' in self.fields:
+                    self.fields['category'].widget.attrs['readonly'] = True
             else:
                 self.fields['add_mode'].initial = 'manual'
         else:
