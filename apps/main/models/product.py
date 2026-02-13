@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 from PIL import Image
 
 from apps.main.models import BaseModel, Market
@@ -18,7 +17,7 @@ def validate_image_size(image):
     """
     if image.size > MAX_IMAGE_SIZE_BYTES:
         raise ValidationError(
-            _("Image file size exceeds %(max_size)s MB. Current size: %(current_size).2f MB.")
+            "Rasm hajmi %(max_size)s MB dan oshdi. Hozirgi hajmi: %(current_size).2f MB."
             % {
                 "max_size": MAX_IMAGE_SIZE_MB,
                 "current_size": image.size / (1024 * 1024),
@@ -41,10 +40,8 @@ def validate_image_dimensions(image):
                 width, height = img.size
                 if width > MAX_IMAGE_WIDTH or height > MAX_IMAGE_HEIGHT:
                     raise ValidationError(
-                        _(
-                            "Image dimensions exceed maximum allowed size of %(max_width)dx%(max_height)d pixels. "
-                            "Current size: %(width)dx%(height)d pixels."
-                        )
+                        "Rasm o'lchamlari ruxsat etilgan maksimum %(max_width)dx%(max_height)d pikseldan oshdi. "
+                        "Hozirgi o'lcham: %(width)dx%(height)d piksel."
                         % {
                             "max_width": MAX_IMAGE_WIDTH,
                             "max_height": MAX_IMAGE_HEIGHT,
@@ -69,13 +66,13 @@ def validate_image_dimensions(image):
 
 
 class CommonProduct(BaseModel):
-    name = models.CharField(max_length=128, verbose_name=_("Name"))
-    description = models.TextField(verbose_name=_("Description"))
+    name = models.CharField(max_length=128, verbose_name="Nomi")
+    description = models.TextField(verbose_name="Tavsif")
     category = models.ForeignKey(
         "main.Category",
         on_delete=models.PROTECT,
         related_name="common_products",
-        verbose_name=_("Category"),
+        verbose_name="Kategoriya",
     )
 
     def __str__(self):
@@ -104,8 +101,8 @@ class CommonProduct(BaseModel):
         return primary.image if primary else None
 
     class Meta:
-        verbose_name = _("Common product")
-        verbose_name_plural = _("Common products")
+        verbose_name = "Umumiy mahsulot"
+        verbose_name_plural = "Umumiy mahsulotlar"
 
 
 class CommonProductImage(BaseModel):
@@ -113,18 +110,18 @@ class CommonProductImage(BaseModel):
         CommonProduct,
         on_delete=models.CASCADE,
         related_name="images",
-        verbose_name=_("Common product"),
+        verbose_name="Umumiy mahsulot",
     )
     image = models.ImageField(
         upload_to="common_product_images/",
-        verbose_name=_("Image"),
+        verbose_name="Rasm",
         validators=[validate_image_size, validate_image_dimensions],
     )
-    position = models.PositiveIntegerField(default=0, verbose_name=_("Position"))
+    position = models.PositiveIntegerField(default=0, verbose_name="O'rin")
 
     class Meta:
-        verbose_name = _("Common product image")
-        verbose_name_plural = _("Common product images")
+        verbose_name = "Umumiy mahsulot rasmi"
+        verbose_name_plural = "Umumiy mahsulot rasmlari"
         ordering = ("position", "id")
 
     def __str__(self):
@@ -136,31 +133,31 @@ class Product(BaseModel):
         CommonProduct,
         on_delete=models.PROTECT,
         related_name="market_products",
-        verbose_name=_("Common product"),
+        verbose_name="Umumiy mahsulot",
         blank=True,
         null=True,
     )
-    name = models.CharField(max_length=128, verbose_name=_("Name"), blank=True, null=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Price"))
-    description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
+    name = models.CharField(max_length=128, verbose_name="Nomi", blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Narxi")
+    description = models.TextField(verbose_name="Tavsif", blank=True, null=True)
     market = models.ForeignKey(
         Market,
         on_delete=models.PROTECT,
         related_name="products",
-        verbose_name=_("Market"),
+        verbose_name="Do'kon",
     )
     discount_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name=_("Discount price"),
+        verbose_name="Chegirmali narx",
     )
     discount_type = models.CharField(
         max_length=128,
         blank=True,
         null=True,
-        verbose_name=_("Discount type"),
+        verbose_name="Chegirma turi",
     )
     discount_value = models.DecimalField(
         max_digits=10,
@@ -172,7 +169,7 @@ class Product(BaseModel):
         "main.Category",
         on_delete=models.PROTECT,
         related_name="products",
-        verbose_name=_("Category"),
+        verbose_name="Kategoriya",
         blank=True,
         null=True,
     )
@@ -185,11 +182,11 @@ class Product(BaseModel):
         if not self.common_product:
             errors = {}
             if not self.name:
-                errors["name"] = _("Name is required when common product is not selected.")
+                errors["name"] = "Umumiy mahsulot tanlanmaganda nomi talab qilinadi."
             if not self.description:
-                errors["description"] = _("Description is required when common product is not selected.")
+                errors["description"] = "Umumiy mahsulot tanlanmaganda tavsif talab qilinadi."
             if not self.category_id:
-                errors["category"] = _("Category is required when common product is not selected.")
+                errors["category"] = "Umumiy mahsulot tanlanmaganda kategoriya talab qilinadi."
             if errors:
                 raise ValidationError(errors)
 
@@ -232,8 +229,8 @@ class Product(BaseModel):
         return primary.image if primary else None
 
     class Meta:
-        verbose_name = _("Product")
-        verbose_name_plural = _("Products")
+        verbose_name = "Mahsulot"
+        verbose_name_plural = "Mahsulotlar"
 
 
 class ProductImage(BaseModel):
@@ -241,18 +238,18 @@ class ProductImage(BaseModel):
         Product,
         on_delete=models.CASCADE,
         related_name="images",
-        verbose_name=_("Product"),
+        verbose_name="Mahsulot",
     )
     image = models.ImageField(
         upload_to="product_images/",
-        verbose_name=_("Image"),
+        verbose_name="Rasm",
         validators=[validate_image_size, validate_image_dimensions],
     )
-    position = models.PositiveIntegerField(default=0, verbose_name=_("Position"))
+    position = models.PositiveIntegerField(default=0, verbose_name="O'rin")
 
     class Meta:
-        verbose_name = _("Product image")
-        verbose_name_plural = _("Product images")
+        verbose_name = "Mahsulot rasmi"
+        verbose_name_plural = "Mahsulot rasmlari"
         ordering = ("position", "id")
 
     def __str__(self):

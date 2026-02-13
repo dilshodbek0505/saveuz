@@ -19,6 +19,6 @@ class Favorite(BaseModel):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = "Favorite"
-        verbose_name_plural = "Favorites"
+        verbose_name = "Sevimli"
+        verbose_name_plural = "Sevimlilar"
         unique_together = ('user', 'product')

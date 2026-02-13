@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.http import JsonResponse
 from django.urls import path, reverse
-from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
 
 from import_export.admin import ExportMixin 
@@ -34,16 +33,16 @@ class ProductAdmin(ExportMixin, ModelAdmin):
     readonly_fields = ("discount_value", "discount_price", "discount_type", "display_common_product_info")
     
     fieldsets = (
-        (_("Способ добавления"), {
+        ("Qo'shish usuli", {
             "fields": ("add_mode",),
-            "description": _("Выберите способ добавления продукта: из общей базы или вручную.")
+            "description": "Mahsulot qo'shish usulini tanlang: umumiy bazadan yoki qo'lda."
         }),
-        (_("Продукт из общей базы"), {
+        ("Umumiy bazadan mahsulot", {
             "fields": ("common_product", "display_common_product_info"),
             "classes": ("common-product-section",),
-            "description": _("Выберите продукт из общей базы. Название, описание и категория будут взяты автоматически. Вам нужно указать только цену и маркет.")
+            "description": "Umumiy bazadan mahsulotni tanlang. Nomi, tavsif va kategoriya avtomatik olinadi. Faqat narx va do'konni ko'rsating."
         }),
-        (_("Основная информация (ручное заполнение)"), {
+        ("Asosiy ma'lumot (qo'lda)", {
             "fields": (
                 "name",
                 "name_ru",
@@ -56,31 +55,31 @@ class ProductAdmin(ExportMixin, ModelAdmin):
                 "category",
             ),
             "classes": ("manual-fields-section",),
-            "description": _("Заполните эти поля, если добавляете продукт вручную.")
+            "description": "Mahsulotni qo'lda qo'shasangiz, bu maydonlarni to'ldiring."
         }),
-        (_("Маркет и цена"), {
+        ("Do'kon va narx", {
             "fields": ("market", "price"),
-            "description": _("Выберите свой маркет и укажите цену продукта.")
+            "description": "Do'koningizni tanlang va mahsulot narxini kiriting."
         }),
     )
     
     inlines = (ProductImageInline,)
 
-    @admin.display(description=_("Name"))
+    @admin.display(description="Nomi")
     def display_name(self, obj):
         return obj.resolved_name
 
-    @admin.display(description=_("Источник"))
+    @admin.display(description="Manba")
     def display_source(self, obj):
         if obj.common_product:
             return format_html(
-                '<span style="color: #28a745;">✓ Из общей базы</span>'
+                '<span style="color: #28a745;">✓ Umumiy bazadan</span>'
             )
         return format_html(
-            '<span style="color: #ffc107;">✎ Вручную</span>'
+            '<span style="color: #ffc107;">✎ Qo\'lda</span>'
         )
 
-    @admin.display(description=_("Информация о продукте"))
+    @admin.display(description="Mahsulot haqida ma'lumot")
     def display_common_product_info(self, obj=None):
         info_url = reverse("admin:main_product_common_product_info")
 
@@ -93,10 +92,10 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             return format_html(
                 '<div id="common-product-info" class="common-product-info is-empty" data-url="{}">'
                 '<div class="common-product-info__layout">'
-                '<div class="common-product-info__image is-empty">Фото</div>'
+                '<div class="common-product-info__image is-empty">Rasm</div>'
                 '<div class="common-product-info__content">'
-                '<div class="common-product-info__title">Выберите продукт из общей базы</div>'
-                '<div class="common-product-info__text">Чтобы увидеть информацию и фото</div>'
+                '<div class="common-product-info__title">Umumiy bazadan mahsulot tanlang</div>'
+                '<div class="common-product-info__text">Ma\'lumot va rasmini ko\'rish uchun</div>'
                 '</div>'
                 '</div>'
                 '</div>',
@@ -117,7 +116,7 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             '<div class="common-product-info__content">'
             '<div class="common-product-info__title">{} </div>'
             '<div class="common-product-info__text">{}</div>'
-            '<div class="common-product-info__meta">Категория: {}</div>'
+            '<div class="common-product-info__meta">Kategoriya: {}</div>'
             '</div>'
             '</div>'
             '</div>',
@@ -127,7 +126,7 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             common_product.description[:120] + ("..." if len(common_product.description) > 120 else ""),
             common_product.category.name if common_product.category else "-"
         )
-    display_common_product_info.short_description = _("Информация о продукте")
+    display_common_product_info.short_description = "Mahsulot haqida ma'lumot"
 
     def get_queryset(self, request):
         user = request.user

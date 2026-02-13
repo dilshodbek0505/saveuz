@@ -1,5 +1,5 @@
 UNFOLD = {
-    "SITE_TITLE": "SaveUz Admin",
+    "SITE_TITLE": "SaveUz Boshqaruv",
     "SITE_HEADER": "SaveUz",
     "SITE_NAME": "SaveUz",
     "SITE_URL": "https://saveuz.org/",
@@ -67,65 +67,65 @@ UNFOLD = {
         "show_all_applications": False,  # Custom navigation ishlatamiz
         "navigation": [
             {
-                "title": "Navigation",
+                "title": "Navigatsiya",
                 "separator": True,
                 "items": [
                     {
-                        "title": "Dashboard",
+                        "title": "Bosh sahifa",
                         "icon": "dashboard",
                         "link": lambda request: "/admin/",
                         "permission": lambda request: request.user.is_staff,
                     },
                     {
-                        "title": "Common Products",
+                        "title": "Umumiy mahsulotlar",
                         "icon": "inventory",
                         "link": lambda request: "/admin/main/commonproduct/",
                         "permission": lambda request: request.user.is_superuser,
                     },
                     {
-                        "title": "Products",
+                        "title": "Mahsulotlar",
                         "icon": "inventory_2",
                         "link": lambda request: "/admin/main/product/",
                         "permission": lambda request: request.user.has_perm("main.view_product"),
                     },
                     {
-                        "title": "Categories",
+                        "title": "Kategoriyalar",
                         "icon": "category",
                         "link": lambda request: "/admin/main/category/",
                         "permission": lambda request: request.user.has_perm("main.view_category"),
                     },
                     {
-                        "title": "Markets",
+                        "title": "Do'konlar",
                         "icon": "store",
                         "link": lambda request: "/admin/main/market/",
                         "permission": lambda request: request.user.has_perm("main.view_market"),
                     },
                     {
-                        "title": "Banners",
+                        "title": "Bannerlar",
                         "icon": "image",
                         "link": lambda request: "/admin/main/banner/",
                         "permission": lambda request: request.user.has_perm("main.view_banner"),
                     },
                     {
-                        "title": "Discounts",
+                        "title": "Chegirmalar",
                         "icon": "local_offer",
                         "link": lambda request: "/admin/main/discount/",
                         "permission": lambda request: request.user.has_perm("main.view_discount"),
                     },
                     {
-                        "title": "Favorites",
+                        "title": "Sevimlilar",
                         "icon": "bookmark",
                         "link": lambda request: "/admin/main/favorite/",
                         "permission": lambda request: request.user.has_perm("main.view_favorite"),
                     },
                     {
-                        "title": "Notifications",
+                        "title": "Bildirishnomalar",
                         "icon": "notifications",
                         "link": lambda request: "/admin/main/notification/",
                         "permission": lambda request: request.user.has_perm("main.view_notification"),
                     },
                     {
-                        "title": "User Notifications",
+                        "title": "Foydalanuvchi bildirishnomalari",
                         "icon": "notifications_active",
                         "link": lambda request: "/admin/main/usernotification/",
                         "permission": lambda request: request.user.has_perm("main.view_usernotification"),
@@ -139,17 +139,17 @@ UNFOLD = {
                 ],
             },
             {
-                "title": "Authentication",
+                "title": "Autentifikatsiya",
                 "separator": True,
                 "items": [
                     {
-                        "title": "Users",
+                        "title": "Foydalanuvchilar",
                         "icon": "person",
                         "link": lambda request: "/admin/user/user/",
                         "permission": lambda request: request.user.has_perm("user.view_user"),
                     },
                     {
-                        "title": "Groups",
+                        "title": "Guruhlar",
                         "icon": "group",
                         "link": lambda request: "/admin/auth/group/",
                         "permission": lambda request: request.user.has_perm("auth.view_group"),

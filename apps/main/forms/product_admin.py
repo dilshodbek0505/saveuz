@@ -1,21 +1,20 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
 
 from apps.main.models import Product, CommonProduct
 
 
 class ProductAdminForm(forms.ModelForm):
-    """Кастомная форма для админки Product с выбором режима добавления"""
-    
+    """Product admin uchun maxsus forma"""
+
     ADD_MODE_CHOICES = [
-        ('common', _('Добавить из общей базы продуктов')),
-        ('manual', _('Добавить вручную')),
+        ('common', 'Umumiy mahsulotlar bazasidan qo\'shish'),
+        ('manual', 'Qo\'lda qo\'shish'),
     ]
-    
+
     add_mode = forms.ChoiceField(
         choices=ADD_MODE_CHOICES,
         widget=forms.RadioSelect(attrs={'class': 'add-mode-selector'}),
-        label=_('Способ добавления'),
+        label='Qo\'shish usuli',
         required=False,
         initial='manual',
     )
@@ -26,7 +25,7 @@ class ProductAdminForm(forms.ModelForm):
         widgets = {
             'common_product': forms.Select(attrs={
                 'class': 'common-product-select',
-                'data-placeholder': _('Выберите продукт из общей базы')
+                'data-placeholder': 'Umumiy bazadan mahsulot tanlang'
             }),
         }
 
@@ -63,18 +62,17 @@ class ProductAdminForm(forms.ModelForm):
         else:
             self.fields['add_mode'].initial = 'manual'
         
-        # Настраиваем help_text для полей
-        self.fields['common_product'].help_text = _(
-            'Выберите продукт из общей базы. Название, описание и категория будут взяты автоматически.'
+        self.fields['common_product'].help_text = (
+            'Umumiy bazadan mahsulot tanlang. Nomi, tavsif va kategoriya avtomatik olinadi.'
         )
-        self.fields['name'].help_text = _(
-            'Заполните вручную, если не выбран продукт из общей базы.'
+        self.fields['name'].help_text = (
+            'Umumiy bazadan mahsulot tanlanmasa, qo\'lda to\'ldiring.'
         )
-        self.fields['description'].help_text = _(
-            'Заполните вручную, если не выбран продукт из общей базы.'
+        self.fields['description'].help_text = (
+            'Umumiy bazadan mahsulot tanlanmasa, qo\'lda to\'ldiring.'
         )
-        self.fields['category'].help_text = _(
-            'Заполните вручную, если не выбран продукт из общей базы.'
+        self.fields['category'].help_text = (
+            'Umumiy bazadan mahsulot tanlanmasa, qo\'lda to\'ldiring.'
         )
 
     def clean(self):
@@ -95,7 +93,7 @@ class ProductAdminForm(forms.ModelForm):
         if add_mode == 'common':
             if not common_product:
                 raise forms.ValidationError({
-                    'common_product': _('Необходимо выбрать продукт из общей базы.')
+                    'common_product': 'Umumiy bazadan mahsulot tanlashingiz kerak.'
                 })
             # Очищаем поля, которые будут взяты из common_product
             cleaned_data['name'] = None
@@ -109,15 +107,15 @@ class ProductAdminForm(forms.ModelForm):
             cleaned_data['category'] = common_product.category if common_product else None
         elif add_mode == 'manual':
             required_fields = {
-                'name': _('Название обязательно при ручном добавлении.'),
-                'name_ru': _('Название (RU) обязательно при ручном добавлении.'),
-                'name_uz': _('Название (UZ) обязательно при ручном добавлении.'),
-                'name_en': _('Название (EN) обязательно при ручном добавлении.'),
-                'description': _('Описание обязательно при ручном добавлении.'),
-                'description_ru': _('Описание (RU) обязательно при ручном добавлении.'),
-                'description_uz': _('Описание (UZ) обязательно при ручном добавлении.'),
-                'description_en': _('Описание (EN) обязательно при ручном добавлении.'),
-                'category': _('Категория обязательна при ручном добавлении.'),
+                'name': 'Qo\'lda qo\'shishda nomi talab qilinadi.',
+                'name_ru': 'Qo\'lda qo\'shishda nomi (RU) talab qilinadi.',
+                'name_uz': 'Qo\'lda qo\'shishda nomi (UZ) talab qilinadi.',
+                'name_en': 'Qo\'lda qo\'shishda nomi (EN) talab qilinadi.',
+                'description': 'Qo\'lda qo\'shishda tavsif talab qilinadi.',
+                'description_ru': 'Qo\'lda qo\'shishda tavsif (RU) talab qilinadi.',
+                'description_uz': 'Qo\'lda qo\'shishda tavsif (UZ) talab qilinadi.',
+                'description_en': 'Qo\'lda qo\'shishda tavsif (EN) talab qilinadi.',
+                'category': 'Qo\'lda qo\'shishda kategoriya talab qilinadi.',
             }
             errors = {}
             for field, message in required_fields.items():

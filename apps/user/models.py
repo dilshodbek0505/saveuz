@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 from apps.user.managers import CustomUserManager
@@ -10,21 +9,21 @@ class User(AbstractUser):
     email = None
     username = None
 
-    phone_number = models.CharField(max_length=20, unique=True, verbose_name=_('Phone number'))
+    phone_number = models.CharField(max_length=20, unique=True, verbose_name="Telefon raqami")
     logo = models.ImageField(
         upload_to="user_logo/",
-        blank=True, null=True, 
-        verbose_name=_("Logo"))
+        blank=True, null=True,
+        verbose_name="Logotip")
     notification_allowed = models.BooleanField(default=True)
     test_user = models.BooleanField(default=False, help_text="Test uchun foydalanuvchi")
     fcm_token = models.CharField(max_length=255, blank=True, null=True)
     
     lang = models.CharField(
-        _("Language"),
+        "Til",
         max_length=20,
         choices=settings.LANGUAGES,
-        default="uz",  # set your system's default here
-        help_text=_("Preferred language for the user"),
+        default="uz",
+        help_text="Foydalanuvchi tanlagan til",
     )
 
     USERNAME_FIELD = 'phone_number'
@@ -37,8 +36,8 @@ class User(AbstractUser):
     
     class Meta:
         swappable = "AUTH_USER_MODEL"
-        verbose_name = _('User')
-        verbose_name_plural = _('Users')
+        verbose_name = "Foydalanuvchi"
+        verbose_name_plural = "Foydalanuvchilar"
 
 
 import uuid

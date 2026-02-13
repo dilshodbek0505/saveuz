@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
 from django.contrib.auth.models import Group
-from django.utils.translation import gettext_lazy as _
 
 from apps.user.models import User
 from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
@@ -10,6 +9,7 @@ from unfold.admin import ModelAdmin
 
 
 admin.site.unregister(Group)
+
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin, ModelAdmin):
@@ -19,9 +19,9 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     change_password_form = AdminPasswordChangeForm
     fieldsets = (
         (None, {"fields": ("phone_number", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name", "logo")}),
+        ("Shaxsiy ma'lumot", {"fields": ("first_name", "last_name", "logo")}),
         (
-            _("Permissions"),
+            "Ruxsatlar",
             {
                 "fields": (
                     "is_active",
@@ -32,7 +32,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
                 ),
             },
         ),
-        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+        ("Muhim sanalar", {"fields": ("last_login", "date_joined")}),
     )
 
     add_fieldsets = (
