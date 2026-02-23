@@ -10,6 +10,11 @@ from apps.user.utils import SMSBusiness
 
 User = get_user_model()
 
+TEST_STATIC_CODES = {
+    "+998919110111": "63544",  # существующий тестовый номер
+    "+998001001001": "1111",   # тестовый номер для ревью (фиксированный OTP)
+}
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(read_only=True)  # Phone numberni read_only qildik
@@ -46,15 +51,16 @@ class OTPSendSerializer(serializers.Serializer):
         phone = validated_data.get("phone")
         code, text = self.get_text()
         
-        if phone == "+998919110111":
-            code = "63544"
+        static_code = TEST_STATIC_CODES.get(phone)
+        if static_code:
+            code = static_code
         
         cache_key = f"sms:{phone}"
         cache.set(cache_key, code, timeout=60*2)
         
         lang = self.get_lang()
         
-        if phone == "+998919110111":
+        if static_code:
             return validated_data
         
         sms_business = SMSBusiness(phone=f"998{phone}", text=text)
@@ -86,6 +92,11 @@ class LoginSerializer(serializers.Serializer):
         cache_key = f"sms:{phone}"
         saved_code = cache.get(cache_key)
 
+        static_code = TEST_STATIC_CODES.get(phone)
+        if static_code and str(code) == str(static_code):
+            # Разрешаем вход даже если кеш истёк, для ревью-кейса с фиксированным кодом
+            saved_code = static_code
+
         res = self.context.get("request")
         if res:
             lang = res.headers.get("Accept-Language", "uz")
@@ -102,6 +113,15 @@ class LoginSerializer(serializers.Serializer):
         cache.delete(cache_key)
 
         user_exists = User.objects.filter(phone_number=attrs['phone']).first()
+        if not user_exists and attrs['phone'] in TEST_STATIC_CODES:
+            # Автосоздаем тестового пользователя для ревью, чтобы вход был доступен
+            user_exists = User.objects.create(
+                first_name="Test",
+                last_name="User",
+                phone_number=attrs['phone'],
+                test_user=True,
+            )
+        
         if not user_exists:
             err_msg = "Foydalanuvchi topilmadi"
             if lang == "en":
