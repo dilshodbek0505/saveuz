@@ -1,4 +1,4 @@
-from django.db.models import OuterRef, Exists, Count
+from django.db.models import OuterRef, Exists, Count, Q
 
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework import permissions
@@ -15,7 +15,21 @@ class MarketView(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         qs = super().get_queryset()
-        
+
+        search = (self.request.query_params.get("search") or "").strip()
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search)
+                | Q(name_ru__icontains=search)
+                | Q(name_uz__icontains=search)
+                | Q(name_en__icontains=search)
+                | Q(description__icontains=search)
+                | Q(description_ru__icontains=search)
+                | Q(description_uz__icontains=search)
+                | Q(description_en__icontains=search)
+                | Q(address__icontains=search)
+            )
+
         owner_id = self.request.query_params.get("owner_id")
         if owner_id:
             qs = qs.filter(owner_id=owner_id)

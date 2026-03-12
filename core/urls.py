@@ -58,6 +58,7 @@ urlpatterns = [
 ]
 
 
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Раздача статики и медиа: при DEBUG=True runserver сам отдаёт static из finders;
+# при DEBUG=False нужны эти маршруты и предварительный collectstatic, иначе Unfold (CSS, шрифты) не загрузится
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

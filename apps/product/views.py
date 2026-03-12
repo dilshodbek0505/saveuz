@@ -20,15 +20,24 @@ class ProductView(ListAPIView):
     ).prefetch_related("images", "common_product__images")
     serializer_class = ProductSerializer
     filter_backends = [SearchFilter, OrderingFilter]
+    # Поиск без учёта регистра (DRF SearchFilter по умолчанию использует icontains)
     search_fields = [
         "name",
         "name_ru",
         "name_uz",
         "name_en",
+        "description",
+        "description_ru",
+        "description_uz",
+        "description_en",
         "common_product__name",
         "common_product__name_ru",
         "common_product__name_uz",
         "common_product__name_en",
+        "market__name",
+        "market__name_ru",
+        "market__name_uz",
+        "market__name_en",
     ]
     permission_classes = [permissions.AllowAny]
     ordering_fields = ['price']

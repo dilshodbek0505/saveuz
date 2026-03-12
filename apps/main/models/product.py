@@ -5,8 +5,12 @@ from PIL import Image
 from apps.main.models import BaseModel, Market
 
 # Image validation constants
+# В приложении: карточки товара 120×120 / 140×120, страница товара — по ширине экрана, maxHeight 170.
+# 1024×1024 достаточно для Retina (120px × 2 ≈ 240px, экран ~400px × 2 = 800px).
 MAX_IMAGE_SIZE_MB = 5
 MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024
+MIN_IMAGE_WIDTH = 200
+MIN_IMAGE_HEIGHT = 200
 MAX_IMAGE_WIDTH = 1024
 MAX_IMAGE_HEIGHT = 1024
 
@@ -27,17 +31,29 @@ def validate_image_size(image):
 
 def validate_image_dimensions(image):
     """
-    Validates that the image dimensions do not exceed the maximum allowed dimensions.
+    Validates that the image dimensions are within the allowed min/max range.
+    Min: чтобы в карточках 120×120 на Retina картинка не была размытой.
+    Max: чтобы не грузить огромные файлы; в приложении показ до ~1024px по большей стороне.
     """
     if image:
         # Save the current file position
         current_position = image.tell() if hasattr(image, 'tell') else 0
-        
-        # Open the image to get its dimensions
+
         try:
-            image.seek(0)  # Reset file pointer to the beginning
+            image.seek(0)
             with Image.open(image) as img:
                 width, height = img.size
+                if width < MIN_IMAGE_WIDTH or height < MIN_IMAGE_HEIGHT:
+                    raise ValidationError(
+                        "Rasm o'lchamlari juda kichik. Minimal: %(min_width)dx%(min_height)d px. "
+                        "Hozirgi: %(width)dx%(height)d px."
+                        % {
+                            "min_width": MIN_IMAGE_WIDTH,
+                            "min_height": MIN_IMAGE_HEIGHT,
+                            "width": width,
+                            "height": height,
+                        }
+                    )
                 if width > MAX_IMAGE_WIDTH or height > MAX_IMAGE_HEIGHT:
                     raise ValidationError(
                         "Rasm o'lchamlari ruxsat etilgan maksimum %(max_width)dx%(max_height)d pikseldan oshdi. "
@@ -50,14 +66,10 @@ def validate_image_dimensions(image):
                         }
                     )
         except ValidationError:
-            # Re-raise validation errors
             raise
         except Exception:
-            # If we can't open the image, it might be invalid
-            # But we don't want to raise an error here as Django will handle it
             pass
         finally:
-            # Reset file pointer to original position
             if hasattr(image, 'seek'):
                 try:
                     image.seek(current_position)
@@ -142,7 +154,7 @@ class Product(BaseModel):
     description = models.TextField(verbose_name="Tavsif", blank=True, null=True)
     market = models.ForeignKey(
         Market,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="products",
         verbose_name="Do'kon",
     )
