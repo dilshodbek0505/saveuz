@@ -30,6 +30,9 @@ jobs:
           echo "🧱 Create migrations (if needed)"
           python manage.py makemigrations --noinput || true
 
+          echo "🧱 Merge migrations (if multiple leaves)"
+          python manage.py makemigrations --merge --noinput || true
+
           echo "🧱 Apply migrations"
           python manage.py migrate --noinput
 
