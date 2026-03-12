@@ -164,7 +164,12 @@ class ProductAdmin(ExportMixin, ModelAdmin):
                 "common-product-info/",
                 self.admin_site.admin_view(self.common_product_info),
                 name="main_product_common_product_info",
-            )
+            ),
+            path(
+                "translate/",
+                self.admin_site.admin_view(self.translate_product_text),
+                name="main_product_translate",
+            ),
         ]
         return custom + urls
 
@@ -199,6 +204,25 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             "image_url": image_url,
         }
         return JsonResponse(data)
+
+    def translate_product_text(self, request):
+        """POST: text, source_lang → { uz, ru, en }. Для имени и описания по отдельности."""
+        if request.method != "POST":
+            return JsonResponse({"error": "Method not allowed"}, status=405)
+        from apps.main.services.translation import translate_to_all_languages
+        import json
+        try:
+            body = json.loads(request.body) if request.body else {}
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        text = (body.get("text") or "").strip()
+        source_lang = (body.get("source_lang") or "uz").lower()
+        if source_lang not in ("uz", "ru", "en"):
+            source_lang = "uz"
+        if not text:
+            return JsonResponse({"uz": "", "ru": "", "en": ""})
+        result = translate_to_all_languages(text, source_lang)
+        return JsonResponse(result)
 
     class Media:
         css = {
