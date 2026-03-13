@@ -23,6 +23,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from apps.panel_admin.views.bulk_product_page import BulkProductAdminPageView
+from core.well_known_views import apple_app_site_association, asset_links_json
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -38,6 +39,17 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    # Universal Links / App Links верификация (для «Поделиться» — открытие приложения по ссылке)
+    path(
+        ".well-known/apple-app-site-association",
+        apple_app_site_association,
+        name="apple-app-site-association",
+    ),
+    path(
+        ".well-known/assetlinks.json",
+        asset_links_json,
+        name="assetlinks-json",
+    ),
     path("admin/", admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),
     path(

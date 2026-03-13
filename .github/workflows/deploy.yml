@@ -44,7 +44,7 @@ jobs:
           _ts "   static done"
 
           _ts "🔧 Nginx (if needed)"
-          [ -f "scripts/setup_nginx_upload_limit.sh" ] && sudo bash scripts/setup_nginx_upload_limit.sh || true
+          [ -f "scripts/setup_nginx_upload_limit.sh" ] && timeout 30 sudo bash scripts/setup_nginx_upload_limit.sh || true
 
           _ts "🔁 Restart supervisor"
           sudo supervisorctl restart saveuz
