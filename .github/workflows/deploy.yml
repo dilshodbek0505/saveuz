@@ -12,6 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: saveuz-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: saveuz-pip-
+
       - name: Deploy backend
         run: |
           set -e
