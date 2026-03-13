@@ -1,3 +1,4 @@
+# Один шаг без actions — runner не качает ничего с GitHub, не зависает на таймауте.
 name: saveuz-deploy
 
 on:
@@ -7,55 +8,45 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: /var/www/saveuz/.pip-cache
-          key: saveuz-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: saveuz-pip-
-
       - name: Deploy backend
         run: |
           set -e
           _ts() { echo "[$(date -u +%H:%M:%S)] $*"; }
-          _timed() { local start=$(date +%s); "$@"; _ts "   done in $(($(date +%s)-start))s"; }
 
           cd /var/www/saveuz
 
           _ts "📥 Pulling code"
-          _timed git pull origin main
+          git pull origin main
+          _ts "   pull done"
 
           _ts "🐍 Activate venv"
           source venv/bin/activate
-          export PIP_CACHE_DIR="/var/www/saveuz/.pip-cache"
-          mkdir -p "$PIP_CACHE_DIR"
 
           _ts "📦 Install requirements (skip if unchanged)"
           REQUIREMENTS_HASH=$(git rev-parse HEAD:requirements.txt 2>/dev/null || cat requirements.txt | md5sum | cut -c1-32)
           if [ -f .pip-requirements-hash ] && [ "$(cat .pip-requirements-hash)" = "$REQUIREMENTS_HASH" ]; then
-            echo "   requirements.txt unchanged, skipping pip install"
+            echo "   requirements unchanged, skipping pip install"
           else
-            _timed pip install -r requirements.txt
+            pip install -r requirements.txt
             echo "$REQUIREMENTS_HASH" > .pip-requirements-hash
           fi
+          _ts "   requirements done"
 
           _ts "🧱 Migrations"
-          _timed bash -c 'python manage.py makemigrations --noinput || true; python manage.py makemigrations --merge --noinput || true; python manage.py migrate --noinput'
+          python manage.py makemigrations --noinput || true
+          python manage.py makemigrations --merge --noinput || true
+          python manage.py migrate --noinput
+          _ts "   migrations done"
 
           _ts "🎨 Collect static"
-          _timed python manage.py collectstatic --noinput
+          python manage.py collectstatic --noinput
+          _ts "   static done"
 
-          _ts "🔧 Setup nginx upload limits (if needed)"
-          if [ -f "scripts/setup_nginx_upload_limit.sh" ]; then
-            sudo bash scripts/setup_nginx_upload_limit.sh || echo "⚠️  Nginx setup skipped (may need manual configuration)"
-          fi
+          _ts "🔧 Nginx (if needed)"
+          [ -f "scripts/setup_nginx_upload_limit.sh" ] && sudo bash scripts/setup_nginx_upload_limit.sh || true
 
           _ts "🔁 Restart supervisor"
-          _timed sudo supervisorctl restart saveuz
+          sudo supervisorctl restart saveuz
 
           _ts "✅ Deploy finished"
