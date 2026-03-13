@@ -1,24 +1,14 @@
+# Без actions/checkout и actions/cache — runner не качает ничего с GitHub, нет таймаутов.
 name: saveuz-deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: self-hosted
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: /var/www/saveuz/.pip-cache
-          key: saveuz-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: saveuz-pip-
-
       - name: Deploy backend
         run: |
           set -e
@@ -32,35 +22,29 @@ jobs:
 
           _ts "🐍 Activate venv"
           source venv/bin/activate
-          export PIP_CACHE_DIR="/var/www/saveuz/.pip-cache"
-          mkdir -p "$PIP_CACHE_DIR"
 
           _ts "📦 Install requirements (skip if unchanged)"
           REQUIREMENTS_HASH=$(git rev-parse HEAD:requirements.txt 2>/dev/null || cat requirements.txt | md5sum | cut -c1-32)
           if [ -f .pip-requirements-hash ] && [ "$(cat .pip-requirements-hash)" = "$REQUIREMENTS_HASH" ]; then
-            echo "   requirements.txt unchanged, skipping pip install"
+            echo "   requirements unchanged, skipping pip install"
           else
             pip install -r requirements.txt
             echo "$REQUIREMENTS_HASH" > .pip-requirements-hash
           fi
           _ts "   requirements done"
 
-          _ts "🧱 Create migrations (if needed)"
+          _ts "🧱 Migrations"
           python manage.py makemigrations --noinput || true
-          _ts "🧱 Merge migrations (if multiple leaves)"
           python manage.py makemigrations --merge --noinput || true
-          _ts "🧱 Apply migrations"
           python manage.py migrate --noinput
           _ts "   migrations done"
 
           _ts "🎨 Collect static"
           python manage.py collectstatic --noinput
-          _ts "   collectstatic done"
+          _ts "   static done"
 
-          _ts "🔧 Setup nginx upload limits (if needed)"
-          if [ -f "scripts/setup_nginx_upload_limit.sh" ]; then
-            sudo bash scripts/setup_nginx_upload_limit.sh || echo "⚠️  Nginx setup skipped (may need manual configuration)"
-          fi
+          _ts "🔧 Nginx (if needed)"
+          [ -f "scripts/setup_nginx_upload_limit.sh" ] && sudo bash scripts/setup_nginx_upload_limit.sh || true
 
           _ts "🔁 Restart supervisor"
           sudo supervisorctl restart saveuz
