@@ -15,43 +15,54 @@ jobs:
       - name: Cache pip
         uses: actions/cache@v4
         with:
-          path: ~/.cache/pip
+          path: /var/www/saveuz/.pip-cache
           key: saveuz-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: saveuz-pip-
 
       - name: Deploy backend
         run: |
           set -e
+          _ts() { echo "[$(date -u +%H:%M:%S)] $*"; }
 
           cd /var/www/saveuz
 
-          echo "📥 Pulling code"
+          _ts "📥 Pulling code"
           git pull origin main
+          _ts "   pull done"
 
-          echo "🐍 Activate venv"
+          _ts "🐍 Activate venv"
           source venv/bin/activate
+          export PIP_CACHE_DIR="/var/www/saveuz/.pip-cache"
+          mkdir -p "$PIP_CACHE_DIR"
 
-          echo "📦 Install requirements"
-          pip install -r requirements.txt
+          _ts "📦 Install requirements (skip if unchanged)"
+          REQUIREMENTS_HASH=$(git rev-parse HEAD:requirements.txt 2>/dev/null || cat requirements.txt | md5sum | cut -c1-32)
+          if [ -f .pip-requirements-hash ] && [ "$(cat .pip-requirements-hash)" = "$REQUIREMENTS_HASH" ]; then
+            echo "   requirements.txt unchanged, skipping pip install"
+          else
+            pip install -r requirements.txt
+            echo "$REQUIREMENTS_HASH" > .pip-requirements-hash
+          fi
+          _ts "   requirements done"
 
-          echo "🧱 Create migrations (if needed)"
+          _ts "🧱 Create migrations (if needed)"
           python manage.py makemigrations --noinput || true
-
-          echo "🧱 Merge migrations (if multiple leaves)"
+          _ts "🧱 Merge migrations (if multiple leaves)"
           python manage.py makemigrations --merge --noinput || true
-
-          echo "🧱 Apply migrations"
+          _ts "🧱 Apply migrations"
           python manage.py migrate --noinput
+          _ts "   migrations done"
 
-          echo "🎨 Collect static"
+          _ts "🎨 Collect static"
           python manage.py collectstatic --noinput
+          _ts "   collectstatic done"
 
-          echo "🔧 Setup nginx upload limits (if needed)"
+          _ts "🔧 Setup nginx upload limits (if needed)"
           if [ -f "scripts/setup_nginx_upload_limit.sh" ]; then
             sudo bash scripts/setup_nginx_upload_limit.sh || echo "⚠️  Nginx setup skipped (may need manual configuration)"
           fi
 
-          echo "🔁 Restart supervisor"
+          _ts "🔁 Restart supervisor"
           sudo supervisorctl restart saveuz
 
-          echo "✅ Deploy finished"
+          _ts "✅ Deploy finished"
