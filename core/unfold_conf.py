@@ -95,6 +95,12 @@ UNFOLD = {
                         "permission": lambda request: request.user.has_perm("main.view_category"),
                     },
                     {
+                        "title": "Subkategoriyalar",
+                        "icon": "account_tree",
+                        "link": lambda request: "/admin/main/subcategory/",
+                        "permission": lambda request: request.user.has_perm("main.view_subcategory"),
+                    },
+                    {
                         "title": "Do'konlar",
                         "icon": "store",
                         "link": lambda request: "/admin/main/market/",

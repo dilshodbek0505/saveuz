@@ -26,7 +26,7 @@ class AdminMarketSerializer(serializers.ModelSerializer):
 class AdminCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ("id", "name")
+        fields = ("id", "name", "parent", "order")
 
 
 class BulkProductItemSerializer(serializers.ModelSerializer):
@@ -44,6 +44,7 @@ class BulkProductItemSerializer(serializers.ModelSerializer):
             "discount_type",
             "discount_value",
             "category",
+            "subcategory",
         )
 
     def validate(self, attrs):
@@ -77,7 +78,7 @@ class AdminMarketListView(ListAPIView):
 
 
 class AdminCategoryListView(ListAPIView):
-    queryset = Category.objects.all()
+    queryset = Category.objects.order_by("parent_id", "order", "name")
     serializer_class = AdminCategorySerializer
     # Public endpoint: no permissions
 

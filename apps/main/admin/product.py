@@ -6,7 +6,7 @@ from django.utils.html import format_html
 from import_export.admin import ExportMixin 
 from unfold.admin import ModelAdmin
 
-from apps.main.models import Product, ProductImage, CommonProduct
+from apps.main.models import Product, ProductImage, CommonProduct, Subcategory
 from apps.main.forms.product_admin import ProductAdminForm
 from apps.product.formats import ImageAwareXLSX
 from apps.product.resources import ProductResource
@@ -30,6 +30,7 @@ class ProductAdmin(ExportMixin, ModelAdmin):
     list_display = ("id", "display_name", "market", "display_source")
     list_display_links = ("id", "display_name")
     search_fields = ("name", "common_product__name", "market__name")
+    autocomplete_fields = ("category",)
     readonly_fields = ("discount_value", "discount_price", "discount_type", "display_common_product_info")
     
     fieldsets = (
@@ -53,9 +54,10 @@ class ProductAdmin(ExportMixin, ModelAdmin):
                 "description_uz",
                 "description_en",
                 "category",
+                "subcategory",
             ),
             "classes": ("manual-fields-section",),
-            "description": "Mahsulotni qo'lda qo'shasangiz, bu maydonlarni to'ldiring."
+            "description": "Mahsulotni qo'lda qo'shasangiz, bu maydonlarni to'ldiring. Subkategoriya tanlangan kategoriyaga tegishli bo'lishi kerak."
         }),
         ("Do'kon va narx", {
             "fields": ("market", "price"),
@@ -117,6 +119,7 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             '<div class="common-product-info__title">{} </div>'
             '<div class="common-product-info__text">{}</div>'
             '<div class="common-product-info__meta">Kategoriya: {}</div>'
+            '<div class="common-product-info__meta">Subkategoriya: {}</div>'
             '</div>'
             '</div>'
             '</div>',
@@ -124,14 +127,15 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             image_url or "",
             common_product.name,
             common_product.description[:120] + ("..." if len(common_product.description) > 120 else ""),
-            common_product.category.name if common_product.category else "-"
+            common_product.category.name if common_product.category else "-",
+            getattr(common_product.subcategory, "name", None) or "-"
         )
     display_common_product_info.short_description = "Mahsulot haqida ma'lumot"
 
     def get_queryset(self, request):
         user = request.user
         qs = super().get_queryset(request)
-        qs = qs.select_related("market", "common_product", "common_product__category")
+        qs = qs.select_related("market", "common_product", "common_product__category", "common_product__subcategory", "category", "subcategory")
 
         if user.is_staff and not user.is_superuser:
             markets = user.markets.all()
@@ -146,7 +150,23 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             and not request.user.is_superuser
         ):
             kwargs["queryset"] = request.user.markets.all()
+        if db_field.name == "subcategory":
+            obj = kwargs.get("obj") or getattr(request, "_current_product_obj", None)
+            if obj:
+                resolved = obj.resolved_category if hasattr(obj, "resolved_category") else getattr(obj, "category", None)
+                if not resolved and getattr(obj, "subcategory_id", None):
+                    resolved = getattr(obj.subcategory, "category", None)
+                if resolved:
+                    kwargs["queryset"] = Subcategory.objects.filter(category_id=resolved.pk).order_by("order", "name")
+                else:
+                    kwargs["queryset"] = Subcategory.objects.none()
+            else:
+                kwargs["queryset"] = Subcategory.objects.none()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def get_form(self, request, obj=None, **kwargs):
+        request._current_product_obj = obj
+        return super().get_form(request, obj, **kwargs)
 
     def get_formsets_with_inlines(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
@@ -166,6 +186,11 @@ class ProductAdmin(ExportMixin, ModelAdmin):
                 name="main_product_common_product_info",
             ),
             path(
+                "get-subcategories/",
+                self.admin_site.admin_view(self.get_subcategories),
+                name="main_product_get_subcategories",
+            ),
+            path(
                 "translate/",
                 self.admin_site.admin_view(self.translate_product_text),
                 name="main_product_translate",
@@ -173,13 +198,25 @@ class ProductAdmin(ExportMixin, ModelAdmin):
         ]
         return custom + urls
 
+    def get_subcategories(self, request):
+        """JSON: subcategories for category_id (for dependent dropdown)."""
+        category_id = request.GET.get("category_id")
+        if not category_id:
+            return JsonResponse({"subcategories": []})
+        try:
+            qs = Subcategory.objects.filter(category_id=int(category_id)).order_by("order", "name")
+            subcategories = [{"id": s.pk, "name": s.name} for s in qs]
+        except (ValueError, TypeError):
+            subcategories = []
+        return JsonResponse({"subcategories": subcategories})
+
     def common_product_info(self, request):
         product_id = request.GET.get("id")
         if not product_id:
             return JsonResponse({"detail": "Missing id"}, status=400)
 
         try:
-            common_product = CommonProduct.objects.select_related("category").get(id=product_id)
+            common_product = CommonProduct.objects.select_related("category", "subcategory").get(id=product_id)
         except CommonProduct.DoesNotExist:
             return JsonResponse({"detail": "Not found"}, status=404)
 
@@ -201,6 +238,7 @@ class ProductAdmin(ExportMixin, ModelAdmin):
             "description_uz": getattr(common_product, "description_uz", None),
             "description_en": getattr(common_product, "description_en", None),
             "category": common_product.category.name if common_product.category else None,
+            "subcategory": common_product.subcategory.name if getattr(common_product, "subcategory", None) else None,
             "image_url": image_url,
         }
         return JsonResponse(data)

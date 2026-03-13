@@ -46,6 +46,7 @@ class ProductView(ListAPIView):
         manual_parameters=[
             openapi.Parameter(name="market_id", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
             openapi.Parameter(name="category_id", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter(name="subcategory_id", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
             openapi.Parameter(name="is_discount", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, default=False, required=False),
             openapi.Parameter(name="is_favorited", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, required=False),
         ]
@@ -65,6 +66,12 @@ class ProductView(ListAPIView):
         if category_id:
             qs = qs.filter(
                 Q(category_id=category_id) | Q(common_product__category_id=category_id)
+            )
+
+        subcategory_id = self.request.query_params.get("subcategory_id")
+        if subcategory_id:
+            qs = qs.filter(
+                Q(subcategory_id=subcategory_id) | Q(common_product__subcategory_id=subcategory_id)
             )
         
         is_discount = self.request.query_params.get("is_discount")

@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.main.models import Product, CommonProduct
+from apps.main.models import Product, CommonProduct, Subcategory
 
 
 class ProductAdminForm(forms.ModelForm):
@@ -31,6 +31,32 @@ class ProductAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # При POST (добавление/редактирование): подставляем queryset субкатегорий по выбранной категории,
+        # чтобы выбранное через JS значение проходило валидацию ModelChoiceField.
+        if 'subcategory' not in self.fields:
+            pass
+        else:
+            category_id = None
+            prefix = self.prefix or ''
+            cat_key = (prefix + '-category') if prefix else 'category'
+            cat_id_key = (prefix + '-category_id') if prefix else 'category_id'
+            if self.data:
+                category_id = self.data.get(cat_key) or self.data.get(cat_id_key)
+            if not category_id and self.instance and getattr(self.instance, 'category_id', None):
+                category_id = self.instance.category_id
+            if not category_id and self.initial:
+                cat = self.initial.get('category') or self.initial.get('category_id')
+                if hasattr(cat, 'pk'):
+                    category_id = cat.pk
+                elif cat is not None:
+                    category_id = cat
+            if category_id:
+                try:
+                    self.fields['subcategory'].queryset = Subcategory.objects.filter(
+                        category_id=int(category_id)
+                    ).order_by('order', 'name')
+                except (ValueError, TypeError):
+                    pass
         # Делает ручные поля не обязательными на уровне формы
         manual_fields = [
             'name',
@@ -42,6 +68,7 @@ class ProductAdminForm(forms.ModelForm):
             'description_uz',
             'description_en',
             'category',
+            'subcategory',
         ]
         for field in manual_fields:
             if field in self.fields:
@@ -53,10 +80,12 @@ class ProductAdminForm(forms.ModelForm):
                 self.fields['add_mode'].initial = 'common'
                 # Делаем поля ручного ввода readonly, если выбран common_product
                 for field in manual_fields:
-                    if field in self.fields and field != 'category':
+                    if field in self.fields and field not in ('category', 'subcategory'):
                         self.fields[field].widget.attrs['readonly'] = True
                 if 'category' in self.fields:
                     self.fields['category'].widget.attrs['readonly'] = True
+                if 'subcategory' in self.fields:
+                    self.fields['subcategory'].widget.attrs['readonly'] = True
             else:
                 self.fields['add_mode'].initial = 'manual'
         else:
@@ -73,6 +102,9 @@ class ProductAdminForm(forms.ModelForm):
         )
         self.fields['category'].help_text = (
             'Umumiy bazadan mahsulot tanlanmasa, qo\'lda to\'ldiring.'
+        )
+        self.fields['subcategory'].help_text = (
+            'Ixtiyoriy. Tanlangan kategoriyaga tegishli subkategoriya.'
         )
 
     def clean(self):
@@ -105,6 +137,7 @@ class ProductAdminForm(forms.ModelForm):
             cleaned_data['description_uz'] = None
             cleaned_data['description_en'] = None
             cleaned_data['category'] = common_product.category if common_product else None
+            cleaned_data['subcategory'] = getattr(common_product, 'subcategory', None) if common_product else None
         elif add_mode == 'manual':
             required_fields = {
                 'name': 'Qo\'lda qo\'shishda nomi talab qilinadi.',
@@ -141,8 +174,29 @@ class ProductAdminForm(forms.ModelForm):
             instance.description_uz = None
             instance.description_en = None
             instance.category = instance.common_product.category
+            instance.subcategory = getattr(instance.common_product, 'subcategory', None)
         
         if commit:
             instance.save()
         
         return instance
+
+
+class CommonProductAdminForm(forms.ModelForm):
+    """CommonProduct admin: subcategory queryset по категории при POST."""
+
+    class Meta:
+        model = CommonProduct
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.data and 'category' in self.data and 'subcategory' in self.fields:
+            try:
+                category_id = self.data.get('category')
+                if category_id:
+                    self.fields['subcategory'].queryset = Subcategory.objects.filter(
+                        category_id=int(category_id)
+                    ).order_by('order', 'name')
+            except (ValueError, TypeError):
+                pass

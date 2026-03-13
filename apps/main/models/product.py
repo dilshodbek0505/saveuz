@@ -86,9 +86,24 @@ class CommonProduct(BaseModel):
         related_name="common_products",
         verbose_name="Kategoriya",
     )
+    subcategory = models.ForeignKey(
+        "main.Subcategory",
+        on_delete=models.PROTECT,
+        related_name="common_products",
+        verbose_name="Subkategoriya",
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        super().clean()
+        if self.subcategory_id and self.category_id and self.subcategory.category_id != self.category_id:
+            raise ValidationError(
+                {"subcategory": "Subkategoriya tanlangan kategoriyaga tegishli bo'lishi kerak."}
+            )
 
     @property
     def primary_image(self):
@@ -185,6 +200,14 @@ class Product(BaseModel):
         blank=True,
         null=True,
     )
+    subcategory = models.ForeignKey(
+        "main.Subcategory",
+        on_delete=models.PROTECT,
+        related_name="products",
+        verbose_name="Subkategoriya",
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return self.resolved_name or "-"
@@ -201,6 +224,12 @@ class Product(BaseModel):
                 errors["category"] = "Umumiy mahsulot tanlanmaganda kategoriya talab qilinadi."
             if errors:
                 raise ValidationError(errors)
+        # Subcategory must belong to resolved category
+        resolved_cat = self.resolved_category
+        if self.subcategory_id and resolved_cat and self.subcategory.category_id != resolved_cat.pk:
+            raise ValidationError(
+                {"subcategory": "Subkategoriya tanlangan kategoriyaga tegishli bo'lishi kerak."}
+            )
 
     @property
     def resolved_name(self):

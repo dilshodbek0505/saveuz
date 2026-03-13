@@ -582,6 +582,87 @@
         if (descInput && idDesc && idDesc.value) descInput.value = idDesc.value;
     }
 
+    function getSubcategoriesUrl(form) {
+        if (form && form.action) {
+            const base = form.action.replace(/\/add\/?$|\/\d+\/change\/?$/, '');
+            return (base.endsWith('/') ? base : base + '/') + 'get-subcategories/';
+        }
+        const path = window.location.pathname || '';
+        const base = path.replace(/\/add\/?$|\/\d+\/change\/?$/, '');
+        return (base.endsWith('/') ? base : base + '/') + 'get-subcategories/';
+    }
+
+    function initSubcategoryByCategory() {
+        const form = qs('#product_form') || qs('form[id*="product"]') || qs('#changelist-form') || document.querySelector('form');
+        if (!form) return;
+        if (form.dataset.subcategoryInited === 'true') return;
+        const subcategorySelect = form.querySelector('#id_subcategory') || form.querySelector('select[name="subcategory"]');
+        if (!subcategorySelect) return;
+
+        function getCategoryValue() {
+            const categoryField = form.querySelector('#id_category') || form.querySelector('select[name="category"]') || form.querySelector('input[name="category"]') || form.querySelector('[name="category"]');
+            if (!categoryField) return '';
+            if (categoryField.tagName === 'SELECT') return (categoryField.value || '').trim();
+            return (categoryField.value || '').trim();
+        }
+
+        function setSubcategoryOptions(categoryId) {
+            if (!categoryId) {
+                subcategorySelect.innerHTML = '<option value="">---------</option>';
+                subcategorySelect.disabled = false;
+                return;
+            }
+            const url = getSubcategoriesUrl(form) + '?category_id=' + encodeURIComponent(categoryId);
+            const currentValue = subcategorySelect.value;
+            subcategorySelect.disabled = true;
+            subcategorySelect.innerHTML = '<option value="">---------</option>';
+            fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+                .then((r) => r.ok ? r.json() : Promise.reject(r))
+                .then((data) => {
+                    const list = data.subcategories || [];
+                    list.forEach((s) => {
+                        const opt = document.createElement('option');
+                        opt.value = s.id;
+                        opt.textContent = s.name;
+                        subcategorySelect.appendChild(opt);
+                    });
+                    if (currentValue && list.some((s) => String(s.id) === String(currentValue))) {
+                        subcategorySelect.value = currentValue;
+                    } else {
+                        subcategorySelect.value = '';
+                    }
+                })
+                .catch(() => {})
+                .finally(() => {
+                    subcategorySelect.disabled = false;
+                });
+        }
+
+        function onCategoryChange() {
+            setSubcategoryOptions(getCategoryValue());
+        }
+
+        form.addEventListener('change', (e) => {
+            const t = e.target;
+            if (t && (t.name === 'category' || t.id === 'id_category')) onCategoryChange();
+        });
+        form.addEventListener('input', (e) => {
+            const t = e.target;
+            if (t && (t.name === 'category' || t.id === 'id_category')) onCategoryChange();
+        });
+
+        subcategorySelect.addEventListener('focus', () => {
+            const categoryId = getCategoryValue();
+            if (categoryId && subcategorySelect.options.length <= 1) setSubcategoryOptions(categoryId);
+        });
+
+        form.dataset.subcategoryInited = 'true';
+
+        if (getCategoryValue()) {
+            setSubcategoryOptions(getCategoryValue());
+        }
+    }
+
     function initHandlers() {
         qsa('input[name="add_mode"]').forEach((input) => {
             input.addEventListener('change', toggleAddMode);
@@ -607,6 +688,8 @@
         initHandlers();
         toggleAddMode();
         initTranslationManual();
+        initSubcategoryByCategory();
+        setTimeout(initSubcategoryByCategory, 400);
         const initialCommon = qs('#id_common_product');
         if (initialCommon && initialCommon.value) {
             updateCommonProductInfo(initialCommon.value);

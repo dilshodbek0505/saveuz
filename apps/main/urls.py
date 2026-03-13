@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from apps.main.views import BannerView, CategoryView, MarketView \
                             ,FavoriteViewSet, MarketDetailView, NotificationListView \
                             ,ToggleNotificationAllowedView, OfertaView
+from apps.main.views.subcategory import SubcategoryListView
 
 
 router = DefaultRouter()
@@ -13,6 +14,7 @@ router.register(r'favorites', FavoriteViewSet, basename='favorites')
 urlpatterns = [
     path("banner/BannerList/", BannerView.as_view(), name="banner-list"),
     path("category/CategoryList/", CategoryView.as_view(), name="category-list"),
+    path("subcategory/SubcategoryList/", SubcategoryListView.as_view(), name="subcategory-list"),
     path("market/MarketList/", MarketView.as_view(), name="market-list"),
     path("market/MarketDetail/<int:pk>/", MarketDetailView.as_view(), name="market-detail"),
 

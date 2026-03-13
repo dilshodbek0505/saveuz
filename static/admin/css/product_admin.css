@@ -792,3 +792,119 @@ body.dark .translation-modal-footer,
 .translation-modal-btn-save:hover {
     filter: brightness(1.05);
 }
+
+/* ========== Category admin (subcategories) — light & dark ========== */
+
+#result_list .category-admin-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--saveuz-border);
+    display: block;
+    background: var(--saveuz-card-bg);
+}
+
+#result_list .category-admin-no-image {
+    color: var(--saveuz-text);
+    opacity: 0.6;
+    font-size: 13px;
+}
+
+#result_list .category-admin-root {
+    font-weight: 600;
+    color: var(--saveuz-text);
+}
+
+#result_list .category-admin-indent {
+    display: inline-block;
+    width: 20px;
+    height: 1em;
+    margin-right: 4px;
+    vertical-align: middle;
+    background: linear-gradient(
+        to bottom,
+        transparent 45%,
+        var(--saveuz-border) 45%,
+        var(--saveuz-border) 55%,
+        transparent 55%
+    );
+    background-size: 100% 1em;
+    opacity: 0.7;
+}
+
+#result_list .category-admin-sub {
+    color: var(--saveuz-text);
+    font-weight: 500;
+}
+
+#result_list .category-admin-children-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--saveuz-primary);
+    color: #fff;
+    opacity: 0.9;
+}
+
+/* Dark theme overrides for category admin */
+[data-theme="dark"] #result_list .category-admin-thumb,
+html[data-theme="dark"] #result_list .category-admin-thumb,
+body[data-theme="dark"] #result_list .category-admin-thumb,
+.theme-dark #result_list .category-admin-thumb,
+body.dark #result_list .category-admin-thumb,
+.dark-mode #result_list .category-admin-thumb {
+    border-color: #334155;
+    background: #1e293b;
+}
+
+[data-theme="dark"] #result_list .category-admin-no-image,
+html[data-theme="dark"] #result_list .category-admin-no-image,
+body[data-theme="dark"] #result_list .category-admin-no-image,
+.theme-dark #result_list .category-admin-no-image,
+body.dark #result_list .category-admin-no-image,
+.dark-mode #result_list .category-admin-no-image {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] #result_list .category-admin-root,
+html[data-theme="dark"] #result_list .category-admin-root,
+body[data-theme="dark"] #result_list .category-admin-root,
+.theme-dark #result_list .category-admin-root,
+body.dark #result_list .category-admin-root,
+.dark-mode #result_list .category-admin-root {
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] #result_list .category-admin-indent,
+html[data-theme="dark"] #result_list .category-admin-indent,
+body[data-theme="dark"] #result_list .category-admin-indent,
+.theme-dark #result_list .category-admin-indent,
+body.dark #result_list .category-admin-indent,
+.dark-mode #result_list .category-admin-indent {
+    opacity: 0.5;
+}
+
+[data-theme="dark"] #result_list .category-admin-sub,
+html[data-theme="dark"] #result_list .category-admin-sub,
+body[data-theme="dark"] #result_list .category-admin-sub,
+.theme-dark #result_list .category-admin-sub,
+body.dark #result_list .category-admin-sub,
+.dark-mode #result_list .category-admin-sub {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] #result_list .category-admin-children-count,
+html[data-theme="dark"] #result_list .category-admin-children-count,
+body[data-theme="dark"] #result_list .category-admin-children-count,
+.theme-dark #result_list .category-admin-children-count,
+body.dark #result_list .category-admin-children-count,
+.dark-mode #result_list .category-admin-children-count {
+    background: var(--saveuz-primary);
+    color: #fff;
+}

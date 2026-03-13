@@ -14,6 +14,7 @@ class ProductBulkForm(ProductImagesFormMixin, forms.ModelForm):
             "description",
             "market",
             "category",
+            "subcategory",
             "discount_price",
             "discount_type",
             "discount_value",

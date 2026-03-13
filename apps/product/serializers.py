@@ -4,18 +4,39 @@ from apps.main.models import CommonProductImage, Product, ProductImage
 from apps.main.serializers import CategorySerializer, MarketSerializer
 
 
+def _absolute_image_url(url, context):
+    if not url:
+        return None
+    request = context.get("request")
+    if request is not None:
+        return request.build_absolute_uri(url)
+    return url
+
+
 class ProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = ProductImage
         fields = ("id", "image", "position")
         read_only_fields = fields
 
+    def get_image(self, obj):
+        url = obj.image.url if obj.image else None
+        return _absolute_image_url(url, self.context)
+
 
 class CommonProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = CommonProductImage
         fields = ("id", "image", "position")
         read_only_fields = fields
+
+    def get_image(self, obj):
+        url = obj.image.url if obj.image else None
+        return _absolute_image_url(url, self.context)
 
 
 class ProductSerializer(serializers.ModelSerializer):
