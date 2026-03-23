@@ -30,7 +30,7 @@ class ProductAdmin(ExportMixin, ModelAdmin):
     list_display = ("id", "display_name", "market", "display_source")
     list_display_links = ("id", "display_name")
     search_fields = ("name", "common_product__name", "market__name")
-    autocomplete_fields = ("category",)
+    autocomplete_fields = ("category", "common_product")
     readonly_fields = ("discount_value", "discount_price", "discount_type", "display_common_product_info")
     
     fieldsets = (

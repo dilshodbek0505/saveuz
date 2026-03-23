@@ -91,15 +91,13 @@ body.dark .add-mode-tab,
     display: none !important;
 }
 
-.common-product-select {
-    width: 100%;
-    max-width: 500px;
+.common-product-section .select2-container {
+    width: 100% !important;
+    max-width: 560px;
 }
 
-/* Приведение селектора к стилю Unfold */
-#id_common_product,
-.common-product-select select,
-.common-product-select {
+/* Native select (Select2 keeps it in DOM); стиль видимого поля — .select2-* ниже */
+#id_common_product {
     background: var(--saveuz-card-bg);
     color: var(--saveuz-text);
     border: 1px solid var(--saveuz-border);

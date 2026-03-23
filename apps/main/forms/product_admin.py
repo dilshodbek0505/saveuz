@@ -22,12 +22,6 @@ class ProductAdminForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = '__all__'
-        widgets = {
-            'common_product': forms.Select(attrs={
-                'class': 'common-product-select',
-                'data-placeholder': 'Umumiy bazadan mahsulot tanlang'
-            }),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

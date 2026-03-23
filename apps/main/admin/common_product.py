@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.urls import path
 from unfold.admin import ModelAdmin
 
-from apps.main.models import CommonProduct, CommonProductImage, Subcategory
+from apps.main.models import CommonProduct, CommonProductImage, Product, Subcategory
 from apps.main.forms.product_admin import CommonProductAdminForm
 
 
@@ -69,7 +69,14 @@ class CommonProductAdmin(ModelAdmin):
         return request.user.is_superuser
 
     def has_view_permission(self, request, obj=None):
-        return request.user.is_superuser
+        if request.user.is_superuser:
+            return True
+        # Autocomplete for Product.common_product checks view on CommonProduct; staff who
+        # add/change products already could load the full FK dropdown before autocomplete.
+        opts = Product._meta
+        perm_add = f"{opts.app_label}.add_{opts.model_name}"
+        perm_change = f"{opts.app_label}.change_{opts.model_name}"
+        return request.user.has_perm(perm_add) or request.user.has_perm(perm_change)
 
     def has_add_permission(self, request):
         return request.user.is_superuser
