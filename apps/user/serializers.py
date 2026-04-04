@@ -10,10 +10,30 @@ from apps.user.utils import SMSBusiness
 
 User = get_user_model()
 
-TEST_STATIC_CODES = {
-    "+998919110111": "63544",  # существующий тестовый номер
-    "+998001001001": "1111",   # тестовый номер для ревью (фиксированный OTP)
+# Национальная часть (9 цифр без 998) → фиксированный OTP для тестов/ревью.
+# Клиент (Flutter) в API шлёт только эти 9 цифр, например 001001001, а не +998001001001.
+UZ_TEST_STATIC_BY_NATIONAL_9 = {
+    "919110111": "63544",  # существующий тестовый номер
+    "001001001": "1111",  # Apple / TestFlight review
 }
+
+
+def static_otp_for_phone(phone: str) -> str | None:
+    """Сопоставить тестовый OTP для любого распространённого формата uz-номера."""
+    if not phone:
+        return None
+    digits = "".join(c for c in phone if c.isdigit())
+    if not digits:
+        return None
+    if digits.startswith("998") and len(digits) >= 12:
+        national9 = digits[3:12]
+    elif len(digits) == 9:
+        national9 = digits
+    elif len(digits) > 9:
+        national9 = digits[-9:]
+    else:
+        national9 = digits
+    return UZ_TEST_STATIC_BY_NATIONAL_9.get(national9)
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -51,7 +71,7 @@ class OTPSendSerializer(serializers.Serializer):
         phone = validated_data.get("phone")
         code, text = self.get_text()
         
-        static_code = TEST_STATIC_CODES.get(phone)
+        static_code = static_otp_for_phone(phone)
         if static_code:
             code = static_code
         
@@ -92,7 +112,7 @@ class LoginSerializer(serializers.Serializer):
         cache_key = f"sms:{phone}"
         saved_code = cache.get(cache_key)
 
-        static_code = TEST_STATIC_CODES.get(phone)
+        static_code = static_otp_for_phone(phone)
         if static_code and str(code) == str(static_code):
             # Разрешаем вход даже если кеш истёк, для ревью-кейса с фиксированным кодом
             saved_code = static_code
@@ -113,7 +133,7 @@ class LoginSerializer(serializers.Serializer):
         cache.delete(cache_key)
 
         user_exists = User.objects.filter(phone_number=attrs['phone']).first()
-        if not user_exists and attrs['phone'] in TEST_STATIC_CODES:
+        if not user_exists and static_otp_for_phone(attrs['phone']):
             # Автосоздаем тестового пользователя для ревью, чтобы вход был доступен
             user_exists = User.objects.create(
                 first_name="Test",
